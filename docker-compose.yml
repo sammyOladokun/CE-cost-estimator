@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=roofing_db
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app  # Live-syncs your local code changes to the container
+    depends_on:
+      - db
+      - redis
