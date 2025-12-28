@@ -1,0 +1,210 @@
+:root {
+  --bg: #0b0b0f;
+  --panel: rgba(255, 255, 255, 0.03);
+  --border: rgba(255, 255, 255, 0.1);
+  --text: #f7f8fb;
+  --subtle: #9aa0b5;
+  --accent: #4a1f1f;
+  --secondary: #13071f;
+  --blur: 12px;
+  color-scheme: dark;
+  font-family: "Inter", "SF Pro Display", system-ui, -apple-system, sans-serif;
+}
+
+.nx-widget {
+  background: linear-gradient(145deg, rgba(74, 31, 31, 0.1), rgba(19, 7, 31, 0.2) 50%, rgba(74, 31, 31, 0.08));
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(var(--blur));
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.45);
+  min-width: 320px;
+  max-width: 960px;
+}
+
+.nx-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.nx-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: var(--subtle);
+  margin: 0 0 6px;
+}
+
+.nx-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.nx-pill {
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  backdrop-filter: blur(var(--blur));
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nx-pill.freemium {
+  color: #f2c94c;
+}
+
+.nx-block {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  background: var(--panel);
+  margin-bottom: 12px;
+}
+
+.nx-field label {
+  display: block;
+  font-size: 12px;
+  color: var(--subtle);
+  margin-bottom: 4px;
+}
+
+.nx-field input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  outline: none;
+}
+
+.nx-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.nx-full {
+  grid-column: 1 / -1;
+}
+
+.nx-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.nx-toggle button,
+.nx-roof-types button {
+  flex: 1;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  padding: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.nx-toggle button.active,
+.nx-roof-types button.active {
+  background: linear-gradient(120deg, var(--accent), var(--secondary));
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.nx-roof-types {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.nx-icon {
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.nx-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+}
+
+.nx-price {
+  font-size: 24px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.nx-digit-roller {
+  display: inline-flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.nx-digit-roller::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(11, 11, 15, 0), rgba(11, 11, 15, 0.65));
+  pointer-events: none;
+}
+
+.nx-digit-roller {
+  animation: roll 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes roll {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+.nx-subtle {
+  color: var(--subtle);
+  margin: 6px 0 10px;
+}
+
+.nx-cta {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: linear-gradient(135deg, var(--accent), var(--secondary));
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nx-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.nx-lock {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--subtle);
+}
+
+@media (max-width: 640px) {
+  .nx-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nx-widget {
+    padding: 16px;
+  }
+}
