@@ -7,12 +7,12 @@ from typing import Optional
 
 def calculate_actual_area(base_area_sqft: float, pitch: float) -> float:
     """
-    Compute roof area using provided pitch adjustment and waste factor.
+    Compute roof area using provided pitch adjustment.
 
-    ActualArea = BaseArea * sqrt(1 + (Pitch/12)^2) * 1.15
+    ActualArea = Ground Area * sqrt((Pitch/12)^2 + 1)
     """
     slope_factor = math.sqrt(1 + (pitch / 12) ** 2)
-    return round(base_area_sqft * slope_factor * 1.15, 2)
+    return round(base_area_sqft * slope_factor, 2)
 
 
 @dataclass

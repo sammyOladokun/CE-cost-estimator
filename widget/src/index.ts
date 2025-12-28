@@ -5,15 +5,15 @@ import "./styles.css";
 
 declare global {
   interface Window {
-    RoofQuoteWidget?: (config: WidgetConfig) => void;
+    nexWidget?: (config: WidgetConfig) => void;
   }
 }
 
 const createShadowHost = () => {
-  const existing = document.getElementById("roof-quote-widget-host");
+  const existing = document.getElementById("nex-widget-host");
   if (existing) return existing;
   const host = document.createElement("div");
-  host.id = "roof-quote-widget-host";
+  host.id = "nex-widget-host";
   document.body.appendChild(host);
   return host;
 };
@@ -30,4 +30,4 @@ export const mountWidget = (config: WidgetConfig) => {
 };
 
 // Expose global initializer for the single-line embed snippet.
-window.RoofQuoteWidget = mountWidget;
+window.nexWidget = mountWidget;

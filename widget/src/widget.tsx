@@ -1,163 +1,259 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 
 export type WidgetConfig = {
-  contractorId: string;
+  tenantId: string;
   apiBase?: string;
-  accent?: string;
-  secondary?: string;
-  subscriptionStatus?: "freemium" | "standard" | "pro";
+  toolSlug?: string;
+  sandbox?: boolean;
 };
 
-type RoofType = "gable" | "hip" | "flat";
-
-const roofTypeLabels: Record<RoofType, string> = {
-  gable: "Gable",
-  hip: "Hip",
-  flat: "Flat",
+type WidgetTheme = {
+  primary_color: string;
+  secondary_color: string;
+  theme: "frosted" | "smoked";
+  logo_url?: string;
+  mark_text?: string;
 };
 
-const tiers = [
-  { key: "good", label: "Good" },
-  { key: "better", label: "Better" },
-  { key: "best", label: "Best" },
-] as const;
+type Estimate = {
+  ground_area: number;
+  pitch: number;
+  actual_area: number;
+  estimate_amount: number;
+};
+
+const defaultTheme: WidgetTheme = {
+  primary_color: "#0A0F1A",
+  secondary_color: "#1F6BFF",
+  theme: "frosted",
+  logo_url: "",
+  mark_text: "neX",
+};
+
+const glassStyle: React.CSSProperties = {
+  backdropFilter: "blur(20px)",
+  background: "rgba(255, 255, 255, 0.16)",
+  border: "1px solid rgba(255, 255, 255, 0.18)",
+};
+
+const calcActualArea = (ground: number, pitch: number) =>
+  Math.round(ground * Math.sqrt((pitch / 12) ** 2 + 1) * 100) / 100;
+
+const fetchJSON = async <T,>(url: string, options?: RequestInit): Promise<T> => {
+  const resp = await fetch(url, options);
+  if (!resp.ok) {
+    throw new Error(`Request failed: ${resp.status}`);
+  }
+  return resp.json() as Promise<T>;
+};
 
 export const WidgetShell: React.FC<WidgetConfig> = ({
-  contractorId,
-  accent = "#4a1f1f",
-  secondary = "#13071f",
-  subscriptionStatus = "freemium",
+  tenantId,
+  apiBase = "",
+  toolSlug = "landmark",
+  sandbox = false,
 }) => {
+  const base = apiBase || window.location.origin;
+  const [theme, setTheme] = useState<WidgetTheme>(defaultTheme);
   const [address, setAddress] = useState("");
-  const [zip, setZip] = useState("");
-  const [roofType, setRoofType] = useState<RoofType>("gable");
-  const [pitch, setPitch] = useState<number>(6);
-  const [baseArea, setBaseArea] = useState<number>(1200);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [locked, setLocked] = useState(true);
+  const [pitch, setPitch] = useState(6);
+  const [groundArea, setGroundArea] = useState(1400);
+  const [showGate, setShowGate] = useState(false);
+  const [lead, setLead] = useState({ full_name: "", email: "", phone: "" });
+  const [estimate, setEstimate] = useState<Estimate | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const rollingPrices = useMemo(() => {
-    const factor = 1 + pitch / 12;
-    return tiers.map(({ key }) => ({
-      key,
-      value: Math.round((baseArea * factor * 1.15) / 100) * 100,
-    }));
-  }, [baseArea, pitch]);
+  const derived = useMemo(() => {
+    if (estimate) return estimate;
+    const actual_area = calcActualArea(groundArea, pitch);
+    return {
+      ground_area: groundArea,
+      pitch,
+      actual_area,
+      estimate_amount: Math.round(actual_area * 2.25 * 100) / 100,
+    };
+  }, [estimate, groundArea, pitch]);
 
-  const handleLeadSubmit = (evt: React.FormEvent) => {
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const data = await fetchJSON<WidgetTheme>(`${base}/api/widget/config`, {
+          headers: {
+            "X-Tenant-ID": tenantId,
+          },
+        });
+        setTheme(data);
+        document.documentElement.style.setProperty("--accent", data.secondary_color || defaultTheme.secondary_color);
+        document.documentElement.style.setProperty("--secondary", data.primary_color || defaultTheme.primary_color);
+      } catch {
+        setTheme(defaultTheme);
+      }
+    };
+    loadConfig();
+  }, [base, tenantId]);
+
+  const handleAddressSubmit = (evt: React.FormEvent) => {
     evt.preventDefault();
-    setLocked(false);
+    setShowGate(true);
+  };
+
+  const submitLead = async (evt: React.FormEvent) => {
+    evt.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      await fetch(`${base}/api/leads/widget`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Tenant-ID": tenantId,
+        },
+        body: JSON.stringify({
+          tool: toolSlug,
+          full_name: lead.full_name,
+          email: lead.email,
+          phone: lead.phone,
+          address,
+          ground_area: groundArea,
+          pitch,
+          actual_area: calcActualArea(groundArea, pitch),
+          source_url: window.location.href,
+        }),
+      });
+
+      const pricing = await fetchJSON<Estimate>(
+        `${base}/api/pricing/estimate?tool=${toolSlug}${sandbox ? "&sandbox=true" : ""}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Tenant-ID": tenantId,
+          },
+          body: JSON.stringify({
+            ground_area: groundArea,
+            pitch,
+            rate_per_sqft: 2.25,
+          }),
+        },
+      );
+      setEstimate(pricing);
+      setShowGate(false);
+    } catch (err: any) {
+      setError(err.message || "Unable to process request");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
-    <div className="nx-widget" style={{ ["--accent" as string]: accent, ["--secondary" as string]: secondary }}>
+    <div
+      className="nx-widget"
+      style={{
+        ["--accent" as string]: theme.secondary_color || defaultTheme.secondary_color,
+        ["--secondary" as string]: theme.primary_color || defaultTheme.primary_color,
+      }}
+    >
       <header className="nx-header">
         <div>
-          <p className="nx-kicker">Instant Roof Quote • Manual Fallback</p>
-          <h3>Powered by your contractor #{contractorId}</h3>
+          <p className="nx-kicker">See Your Roof from Space</p>
+          <h3>neX Landmark Widget</h3>
         </div>
-        <div className={`nx-pill ${subscriptionStatus}`}>
-          {subscriptionStatus === "freemium" ? "Freemium preview" : "Live"}
-        </div>
+        <div className={`nx-pill ${sandbox ? "freemium" : "live"}`}>{sandbox ? "Sandbox mode" : "Live"}</div>
       </header>
 
       <section className="nx-block">
-        <div className="nx-field">
-          <label>Address</label>
+        <form className="nx-field" onSubmit={handleAddressSubmit}>
+          <label>Enter Address</label>
           <input
             value={address}
-            placeholder="123 Market St"
+            placeholder="123 Market St, San Francisco"
             onChange={(e) => setAddress(e.target.value)}
+            required
           />
-        </div>
+          <button className="nx-cta" type="submit">
+            Explore
+          </button>
+        </form>
         <div className="nx-grid-3">
-          <div className="nx-field">
-            <label>ZIP</label>
-            <input value={zip} onChange={(e) => setZip(e.target.value)} placeholder="94107" />
-          </div>
           <div className="nx-field">
             <label>Pitch</label>
             <div className="nx-toggle">
               {[4, 6, 8, 10, 12].map((p) => (
-                <button
-                  key={p}
-                  className={p === pitch ? "active" : ""}
-                  onClick={() => setPitch(p)}
-                  type="button"
-                >
+                <button key={p} className={p === pitch ? "active" : ""} onClick={() => setPitch(p)} type="button">
                   {p}/12
                 </button>
               ))}
             </div>
           </div>
           <div className="nx-field">
-            <label>Base Area (sqft)</label>
-            <input
-              type="number"
-              value={baseArea}
-              onChange={(e) => setBaseArea(Number(e.target.value || 0))}
-            />
+            <label>Ground Area (sqft)</label>
+            <input type="number" value={groundArea} onChange={(e) => setGroundArea(Number(e.target.value || 0))} />
           </div>
-        </div>
-        <div className="nx-roof-types">
-          {(["gable", "hip", "flat"] as RoofType[]).map((type) => (
-            <button
-              key={type}
-              type="button"
-              className={type === roofType ? "active" : ""}
-              onClick={() => setRoofType(type)}
-            >
-              <span className="nx-icon" aria-hidden>
-                {type === "flat" ? "▭" : type === "hip" ? "⟁" : "⧉"}
-              </span>
-              {roofTypeLabels[type]}
-            </button>
-          ))}
+          <div className="nx-field">
+            <label>Actual Area (calc)</label>
+            <input value={derived.actual_area} readOnly />
+          </div>
         </div>
       </section>
 
       <section className="nx-block">
         <div className="nx-grid-3">
-          {rollingPrices.map(({ key, value }) => (
-            <div key={key} className="nx-card">
-              <p className="nx-kicker">{key === "good" ? "Good" : key === "better" ? "Better" : "Best"}</p>
-              <div className="nx-price">
-                <span className="nx-digit-roller">${value.toLocaleString()}</span>
-                <small>/project est.</small>
-              </div>
-              <p className="nx-subtle">Includes materials + labor estimate in manual mode.</p>
-              <button className="nx-cta" type="button" disabled={locked}>
-                Save &amp; Send
-              </button>
+          <div className="nx-card">
+            <p className="nx-kicker">Estimate</p>
+            <div className="nx-price">
+              <span className="nx-digit-roller">${derived.estimate_amount.toLocaleString()}</span>
+              <small>/project</small>
             </div>
-          ))}
+            <p className="nx-subtle">
+              Actual area {derived.actual_area} sqft • Pitch {derived.pitch}/12
+            </p>
+          </div>
+          <div className="nx-card">
+            <p className="nx-kicker">Status</p>
+            <p className="nx-subtle">{sandbox ? "Sandbox preview" : "Licensed access check"}</p>
+          </div>
         </div>
-        {locked && <p className="nx-lock">Submit details to unlock your quote.</p>}
+        <p className="nx-lock">Lead capture is required before showing results.</p>
       </section>
 
-      <section className="nx-block">
-        <form className="nx-grid-3" onSubmit={handleLeadSubmit}>
-          <div className="nx-field">
-            <label>Name</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} required />
-          </div>
-          <div className="nx-field">
-            <label>Email</label>
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          </div>
-          <div className="nx-field">
-            <label>Phone</label>
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} required />
-          </div>
-          <div className="nx-field nx-full">
-            <button className="nx-cta" type="submit">
-              Unlock &amp; Request Callback
-            </button>
-          </div>
-        </form>
-      </section>
+      {showGate &&
+        createPortal(
+          <div className="gate-overlay">
+            <div className="gate-panel" style={glassStyle}>
+              <p className="nx-kicker">Verify to view estimate</p>
+              <h3>Enter your details to unlock the calculator</h3>
+              <form className="gate-form" onSubmit={submitLead}>
+                <input
+                  placeholder="Full Name"
+                  value={lead.full_name}
+                  onChange={(e) => setLead((prev) => ({ ...prev, full_name: e.target.value }))}
+                  required
+                />
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={lead.email}
+                  onChange={(e) => setLead((prev) => ({ ...prev, email: e.target.value }))}
+                  required
+                />
+                <input
+                  placeholder="Phone Number"
+                  value={lead.phone}
+                  onChange={(e) => setLead((prev) => ({ ...prev, phone: e.target.value }))}
+                  required
+                />
+                <button type="submit" disabled={busy}>
+                  {busy ? "Submitting..." : "Submit to View Estimate"}
+                </button>
+                {error && <p className="error">{error}</p>}
+              </form>
+              <p className="watermark">{theme.mark_text || "neX"}</p>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 };

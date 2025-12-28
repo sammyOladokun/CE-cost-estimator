@@ -31,6 +31,14 @@ class Tenant(TimeStampedModel):
     flutterwave_customer_id = models.CharField(max_length=255, blank=True)
     n8n_webhook_url = models.URLField(blank=True)
     leads_quota = models.PositiveIntegerField(default=3)
+    brand_logo_url = models.URLField(blank=True)
+    primary_color = models.CharField(max_length=16, default="#0A0F1A")
+    secondary_color = models.CharField(max_length=16, default="#1F6BFF")
+    widget_theme = models.CharField(
+        max_length=16,
+        choices=[("frosted", "Frosted Glass (Light)"), ("smoked", "Smoked Glass (Dark)")],
+        default="frosted",
+    )
 
     def __str__(self) -> str:  # pragma: no cover - repr convenience
         return f"{self.name} ({self.slug})"
