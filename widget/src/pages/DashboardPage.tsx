@@ -87,7 +87,7 @@ const DashboardPage: React.FC = () => {
         </div>
         <div className="store-grid">
           {installed.map((tool) => (
-            <Link key={tool.id} to={`/dashboard/tools/${tool.slug}`} className="store-card">
+            <Link key={tool.id} to={`/tenant/tools/${tool.slug}`} className="store-card">
               <div className="store-meta">
                 <p className="nx-kicker">Installed</p>
                 <h3>{tool.name}</h3>
@@ -97,7 +97,7 @@ const DashboardPage: React.FC = () => {
             </Link>
           ))}
           {available.map((tool) => (
-            <Link key={tool.id} to={`/dashboard/tools/${tool.slug}`} className="store-card">
+            <Link key={tool.id} to={`/tenant/tools/${tool.slug}`} className="store-card">
               <div className="store-meta">
                 <p className="nx-kicker">Available</p>
                 <h3>{tool.name}</h3>

@@ -98,7 +98,7 @@ const DashboardToolPage: React.FC = () => {
 
   return (
     <div className="page-shell">
-      <Link to="/dashboard" className="backlink">
+      <Link to="/tenant" className="backlink">
         ← Back to dashboard
       </Link>
       <header className="page-header">

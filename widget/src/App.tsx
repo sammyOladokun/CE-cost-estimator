@@ -15,6 +15,7 @@ const App: React.FC = () => {
   const [showProfileCard, setShowProfileCard] = React.useState(false);
 
   const inDashboard = location.pathname.startsWith("/dashboard");
+  const inTenant = location.pathname.startsWith("/tenant");
   const inMarketplace = location.pathname.startsWith("/marketplace");
 
   const handleProfileClick = () => {
@@ -41,7 +42,13 @@ const App: React.FC = () => {
           {!inDashboard && (
             <Link to="/dashboard" className="icon-link">
               <span className="icon">📊</span>
-              <span className="icon-label">Dashboard</span>
+              <span className="icon-label">Command Center</span>
+            </Link>
+          )}
+          {!inTenant && (
+            <Link to="/tenant" className="icon-link">
+              <span className="icon">🧰</span>
+              <span className="icon-label">Tenant</span>
             </Link>
           )}
           <div className="profile-pill" onClick={handleProfileClick}>
@@ -70,9 +77,9 @@ const App: React.FC = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/marketplace" element={<MarketplacePage />} />
         <Route path="/marketplace/:slug" element={<ToolDetailPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/dashboard/tools/:slug" element={<DashboardToolPage />} />
-        <Route path="/admin/command" element={<AdminDashboardPage />} />
+        <Route path="/dashboard" element={<AdminDashboardPage />} />
+        <Route path="/tenant" element={<DashboardPage />} />
+        <Route path="/tenant/tools/:slug" element={<DashboardToolPage />} />
       </Routes>
       <AuthModal />
     </div>

@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "leads",
     "pricing",
     "marketplace",
+    "adminpanel",
 ]
 
 AUTH_USER_MODEL = "accounts.Contractor"
