@@ -15,8 +15,10 @@ from marketplace.models import (
     WidgetConfig,
     WidgetLead,
 )
+from shared.tenant import Tenant
 from marketplace.permissions import HasActiveLicense
 from shared.utils import calculate_actual_area
+from django.utils.text import slugify
 
 
 class ToolSerializer(serializers.ModelSerializer):
@@ -106,9 +108,19 @@ class ToolCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAdminUser]
 
 
-class WidgetLeadCreateView(generics.CreateAPIView):
+class WidgetLeadCreateView(generics.ListCreateAPIView):
     serializer_class = WidgetLeadSerializer
     permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        tenant = getattr(self.request, "tenant", None)
+        if tenant is None:
+            raise Http404("Tenant not found for this widget request.")
+        qs = WidgetLead.objects.filter(tenant=tenant).order_by("-created_at")
+        tool_slug = self.request.query_params.get("tool")
+        if tool_slug:
+            qs = qs.filter(tool__slug=tool_slug)
+        return qs
 
     def perform_create(self, serializer):
         tenant = getattr(self.request, "tenant", None)
@@ -200,4 +212,62 @@ class PricingEstimateView(APIView):
                 "estimate_amount": estimate_amount,
             },
             status=status.HTTP_200_OK,
+        )
+
+
+class OnboardingStartSerializer(serializers.Serializer):
+    tool = serializers.SlugField()
+    tenant_name = serializers.CharField(required=False, allow_blank=True)
+    existing_tenant_id = serializers.UUIDField(required=False)
+    full_name = serializers.CharField(required=False, allow_blank=True)
+    email = serializers.EmailField()
+    password = serializers.CharField(required=False, allow_blank=True)
+
+
+class OnboardingStartView(APIView):
+    """
+    Creates a tenant + contractor + license for new users, or adds a license for existing tenants.
+    Returns a placeholder payment_url (to be swapped with real checkout).
+    """
+
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = OnboardingStartSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        tool_slug = data["tool"]
+        tool = Tool.objects.filter(slug=tool_slug, is_active=True).first()
+        if not tool:
+            raise Http404("Tool not found")
+
+        tenant: Tenant | None = None
+        if data.get("existing_tenant_id"):
+            tenant = Tenant.objects.filter(id=data["existing_tenant_id"]).first()
+            if tenant is None:
+                raise Http404("Tenant not found")
+        else:
+            if not data.get("tenant_name") or not data.get("full_name"):
+                raise serializers.ValidationError("tenant_name and full_name are required for new accounts.")
+            slug_base = slugify(data["tenant_name"])
+            slug_candidate = slug_base
+            idx = 1
+            while Tenant.objects.filter(slug=slug_candidate).exists():
+                idx += 1
+                slug_candidate = f"{slug_base}-{idx}"
+            tenant = Tenant.objects.create(name=data["tenant_name"], slug=slug_candidate)
+
+        license_obj, _ = License.objects.get_or_create(
+            tenant=tenant, tool=tool, defaults={"status": License.Status.ACTIVE}
+        )
+
+        payment_url = f"https://payments.example.com/checkout?tenant={tenant.id}&tool={tool.slug}"
+        return Response(
+            {
+                "tenant_id": str(tenant.id),
+                "license_id": str(license_obj.id),
+                "status": license_obj.status,
+                "payment_url": payment_url,
+            },
+            status=status.HTTP_201_CREATED,
         )
