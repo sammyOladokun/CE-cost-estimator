@@ -109,68 +109,6 @@ const DashboardPage: React.FC = () => {
         </div>
       </section>
 
-      <section className="panel vibe">
-        <div className="panel-head">
-          <h3>Vibe Editor</h3>
-          <p className="nx-subtle">Set your brand colors and theme for the Landmark widget.</p>
-        </div>
-        <div className="vibe-grid">
-          <div>
-            <label className="nx-field">
-              <span>Primary Color</span>
-              <input type="color" value={primary} onChange={(e) => setPrimary(e.target.value)} />
-            </label>
-            <label className="nx-field">
-              <span>Secondary Color</span>
-              <input type="color" value={secondary} onChange={(e) => setSecondary(e.target.value)} />
-            </label>
-            <div className="nx-toggle">
-              <button className={themeChoice === "frosted" ? "active" : ""} onClick={() => setThemeChoice("frosted")} type="button">
-                Frosted Glass
-              </button>
-              <button className={themeChoice === "smoked" ? "active" : ""} onClick={() => setThemeChoice("smoked")} type="button">
-                Smoked Glass
-              </button>
-            </div>
-            <p className="nx-subtle small">Saving not wired yet; placeholder until backend PATCH is added.</p>
-          </div>
-          <div className="vibe-preview" style={{ ["--accent" as string]: secondary, ["--secondary" as string]: primary }}>
-            <p className="nx-kicker">{widgetConfig?.mark_text || "neX"}</p>
-            <h4>Widget Preview</h4>
-            <p className="nx-subtle">Theme: {themeChoice}</p>
-            <div className="vibe-swatches">
-              <span style={{ background: primary }} />
-              <span style={{ background: secondary }} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="panel">
-        <div className="panel-head">
-          <h3>Leads</h3>
-          <p className="nx-subtle">Widget leads per tenant (placeholder until API is wired).</p>
-        </div>
-        <div className="leads-table">
-          <div className="leads-row head">
-            <span>Name</span>
-            <span>Email</span>
-            <span>Phone</span>
-            <span>Address</span>
-            <span>Estimate</span>
-          </div>
-          {leads.length === 0 && <p className="nx-subtle">No leads yet. Capture via widget.</p>}
-          {leads.map((lead) => (
-            <div key={lead.id} className="leads-row">
-              <span>{lead.full_name}</span>
-              <span>{lead.email}</span>
-              <span>{lead.phone}</span>
-              <span>{lead.address}</span>
-              <span>{lead.estimate_amount ? `$${lead.estimate_amount}` : "—"}</span>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   );
 };

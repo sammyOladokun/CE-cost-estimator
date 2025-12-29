@@ -40,6 +40,9 @@ const DashboardToolPage: React.FC = () => {
   const [theme, setTheme] = useState<"frosted" | "smoked">("frosted");
   const [mark, setMark] = useState("neX");
   const [saving, setSaving] = useState(false);
+  const [hook, setHook] = useState("See Your Roof from Space & Get a Technical Estimate in 60 Seconds.");
+  const [materialRate, setMaterialRate] = useState("2.25");
+  const [laborRate, setLaborRate] = useState("1.50");
 
   useEffect(() => {
     const headers = TENANT_ID ? { "X-Tenant-ID": TENANT_ID } : {};
@@ -172,6 +175,75 @@ const DashboardToolPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <h3>Marketing Hook & Branding</h3>
+          <p className="nx-subtle">Customize the hero copy and logo.</p>
+        </div>
+        <div className="vibe-grid">
+          <div>
+            <label className="nx-field">
+              <span>Marketing Hook</span>
+              <input value={hook} onChange={(e) => setHook(e.target.value)} />
+            </label>
+            <label className="nx-field">
+              <span>Logo Upload</span>
+              <input type="file" />
+            </label>
+          </div>
+          <div className="vibe-preview">
+            <p className="nx-kicker">Preview Text</p>
+            <h4>{hook}</h4>
+            <p className="nx-subtle">Update widget/landing copy to match brand voice.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <h3>Embed Code</h3>
+          <p className="nx-subtle">Copy/paste into your site.</p>
+        </div>
+        <pre className="code-block">
+{`<script src="https://cdn.yourdomain.com/nex-widget.iife.js"></script>
+<div id="nex-slot"></div>
+<script>
+  window.nexWidget({
+    tenantId: "${TENANT_ID || "<tenant-id>"}",
+    apiBase: "${API_BASE}",
+    toolSlug: "${slug}",
+    sandbox: false,
+    target: "#nex-slot"
+  });
+</script>`}
+        </pre>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <h3>Price Settings</h3>
+          <p className="nx-subtle">Set material and labor rates.</p>
+        </div>
+        <div className="vibe-grid">
+          <label className="nx-field">
+            <span>Material ($/sqft)</span>
+            <input value={materialRate} onChange={(e) => setMaterialRate(e.target.value)} />
+          </label>
+          <label className="nx-field">
+            <span>Labor ($/sqft)</span>
+            <input value={laborRate} onChange={(e) => setLaborRate(e.target.value)} />
+          </label>
+        </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-head">
+          <h3>Analytics</h3>
+          <p className="nx-subtle">How many people used my calculator this week?</p>
+        </div>
+        <div className="chart-placeholder">[Usage chart placeholder]</div>
       </section>
     </div>
   );

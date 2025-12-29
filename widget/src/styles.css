@@ -53,6 +53,25 @@
   text-decoration: none;
 }
 
+.icon-link {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-left: 16px;
+  text-decoration: none;
+  color: var(--subtle);
+}
+
+.icon-link .icon {
+  font-size: 18px;
+}
+
+.icon-link .icon-label {
+  font-size: 12px;
+}
+
 .profile-pill {
   display: inline-flex;
   align-items: center;
@@ -78,6 +97,21 @@
 
 .nav-links a:hover {
   color: var(--text);
+}
+
+.profile-card {
+  position: absolute;
+  right: 16px;
+  top: 56px;
+  min-width: 220px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: grid;
+  gap: 6px;
 }
 
 .page-shell {
@@ -257,6 +291,39 @@
 
 .leads-row:last-child {
   border-bottom: none;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.mini-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.chart-placeholder {
+  margin-top: 12px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  color: var(--subtle);
+}
+
+.code-block {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  color: var(--text);
+  overflow-x: auto;
+  font-size: 12px;
 }
 
 .landing-hero h1 {
