@@ -6,6 +6,7 @@ export type WidgetConfig = {
   apiBase?: string;
   toolSlug?: string;
   sandbox?: boolean;
+  target?: HTMLElement | string;
 };
 
 type WidgetTheme = {

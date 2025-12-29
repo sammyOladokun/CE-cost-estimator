@@ -9,17 +9,26 @@ declare global {
   }
 }
 
-const createShadowHost = () => {
-  const existing = document.getElementById("nex-widget-host");
+const createShadowHost = (hostId = "nex-widget-host") => {
+  const existing = document.getElementById(hostId);
   if (existing) return existing;
   const host = document.createElement("div");
-  host.id = "nex-widget-host";
+  host.id = hostId;
   document.body.appendChild(host);
   return host;
 };
 
+const resolveTarget = (target?: HTMLElement | string) => {
+  if (!target) return null;
+  if (typeof target === "string") {
+    return document.querySelector(target) as HTMLElement | null;
+  }
+  return target;
+};
+
 export const mountWidget = (config: WidgetConfig) => {
-  const host = createShadowHost();
+  const targetEl = resolveTarget(config.target);
+  const host = targetEl ?? createShadowHost();
   const shadowRoot = host.attachShadow({ mode: "open" });
 
   const container = document.createElement("div");

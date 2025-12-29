@@ -6,6 +6,7 @@ from marketplace import api as marketplace_api
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/marketplace/tools", marketplace_api.ToolListView.as_view(), name="tool-list"),
+    path("api/marketplace/tools/new", marketplace_api.ToolCreateView.as_view(), name="tool-create"),
     path(
         "api/marketplace/tools/<slug:slug>",
         marketplace_api.ToolDetailView.as_view(),

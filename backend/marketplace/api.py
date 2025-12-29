@@ -96,6 +96,16 @@ class MarketplaceLeadCreateView(generics.CreateAPIView):
         serializer.save()
 
 
+class ToolCreateView(generics.CreateAPIView):
+    """
+    Admin-only creation endpoint to publish new tools without touching code.
+    """
+
+    queryset = Tool.objects.all()
+    serializer_class = ToolSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+
 class WidgetLeadCreateView(generics.CreateAPIView):
     serializer_class = WidgetLeadSerializer
     permission_classes = [permissions.AllowAny]
