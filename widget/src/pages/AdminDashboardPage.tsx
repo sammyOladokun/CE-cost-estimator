@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles.css";
+import { useAuth } from "../context/AuthContext";
 
 type Tool = {
   id: string;
@@ -35,14 +36,18 @@ const AdminDashboardPage: React.FC = () => {
   const [tenants, setTenants] = useState<TenantRow[]>([]);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [newTool, setNewTool] = useState({ name: "", slug: "", summary: "", price_monthly: 99 });
+  const { user, openAuth } = useAuth();
 
   useEffect(() => {
     const load = async () => {
+      const headers: HeadersInit = {};
+      if (user?.token) headers["Authorization"] = `Token ${user.token}`;
       const [tResp, tnResp, mResp, tiResp] = await Promise.all([
-        fetch(`${API_BASE}/api/admin/tools/`),
-        fetch(`${API_BASE}/api/admin/tenants/`),
-        fetch(`${API_BASE}/api/admin/metrics/`),
-        fetch(`${API_BASE}/api/admin/tickets/`),
+        fetch(`${API_BASE}/api/admin/tools/`, { headers }),
+        fetch(`${API_BASE}/api/admin/tenants/`, { headers }),
+        fetch(`${API_BASE}/api/admin/metrics/`, { headers }),
+        fetch(`${API_BASE}/api/admin/tickets/`, { headers }),
       ]);
       if (tResp.ok) setTools(await tResp.json());
       if (tnResp.ok) setTenants(await tnResp.json());
@@ -50,7 +55,27 @@ const AdminDashboardPage: React.FC = () => {
       if (tiResp.ok) setTickets(await tiResp.json());
     };
     load();
-  }, []);
+  }, [user?.token]);
+
+  const createTool = async () => {
+    if (!user?.token) {
+      openAuth();
+      return;
+    }
+    const resp = await fetch(`${API_BASE}/api/admin/tools/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${user.token}`,
+      },
+      body: JSON.stringify(newTool),
+    });
+    if (resp.ok) {
+      const saved = await resp.json();
+      setTools((prev) => [saved, ...prev]);
+      setNewTool({ name: "", slug: "", summary: "", price_monthly: 99 });
+    }
+  };
 
   return (
     <div className="page-shell dashboard">
@@ -63,9 +88,27 @@ const AdminDashboardPage: React.FC = () => {
       <section className="panel">
         <div className="panel-head">
           <h3>Marketplace Management</h3>
-          <button className="nx-cta" type="button">
+          <button className="nx-cta" type="button" onClick={createTool}>
             + Add Tool
           </button>
+        </div>
+        <div className="vibe-grid">
+          <label className="nx-field">
+            <span>Name</span>
+            <input value={newTool.name} onChange={(e) => setNewTool({ ...newTool, name: e.target.value })} />
+          </label>
+          <label className="nx-field">
+            <span>Slug</span>
+            <input value={newTool.slug} onChange={(e) => setNewTool({ ...newTool, slug: e.target.value })} />
+          </label>
+          <label className="nx-field">
+            <span>Price / mo</span>
+            <input
+              type="number"
+              value={newTool.price_monthly}
+              onChange={(e) => setNewTool({ ...newTool, price_monthly: Number(e.target.value || 0) })}
+            />
+          </label>
         </div>
         <div className="store-grid">
           {tools.map((tool) => (

@@ -41,8 +41,9 @@ const DashboardToolPage: React.FC = () => {
   const [mark, setMark] = useState("neX");
   const [saving, setSaving] = useState(false);
   const [hook, setHook] = useState("See Your Roof from Space & Get a Technical Estimate in 60 Seconds.");
-  const [materialRate, setMaterialRate] = useState("2.25");
-  const [laborRate, setLaborRate] = useState("1.50");
+  const [materials, setMaterials] = useState<{ name: string; materialRate: string; laborRate: string }[]>([
+    { name: "Asphalt Shingle", materialRate: "2.25", laborRate: "1.50" },
+  ]);
 
   useEffect(() => {
     const headers = TENANT_ID ? { "X-Tenant-ID": TENANT_ID } : {};
@@ -224,18 +225,50 @@ const DashboardToolPage: React.FC = () => {
       <section className="panel">
         <div className="panel-head">
           <h3>Price Settings</h3>
-          <p className="nx-subtle">Set material and labor rates.</p>
+          <p className="nx-subtle">Set material and labor rates per material type.</p>
         </div>
         <div className="vibe-grid">
-          <label className="nx-field">
-            <span>Material ($/sqft)</span>
-            <input value={materialRate} onChange={(e) => setMaterialRate(e.target.value)} />
-          </label>
-          <label className="nx-field">
-            <span>Labor ($/sqft)</span>
-            <input value={laborRate} onChange={(e) => setLaborRate(e.target.value)} />
-          </label>
+          {materials.map((m, idx) => (
+            <div key={idx} className="price-row">
+              <label className="nx-field">
+                <span>Material Type</span>
+                <input
+                  value={m.name}
+                  onChange={(e) =>
+                    setMaterials((prev) => prev.map((item, i) => (i === idx ? { ...item, name: e.target.value } : item)))
+                  }
+                />
+              </label>
+              <label className="nx-field">
+                <span>Material ($/sqft)</span>
+                <input
+                  value={m.materialRate}
+                  onChange={(e) =>
+                    setMaterials((prev) =>
+                      prev.map((item, i) => (i === idx ? { ...item, materialRate: e.target.value } : item)),
+                    )
+                  }
+                />
+              </label>
+              <label className="nx-field">
+                <span>Labor ($/sqft)</span>
+                <input
+                  value={m.laborRate}
+                  onChange={(e) =>
+                    setMaterials((prev) => prev.map((item, i) => (i === idx ? { ...item, laborRate: e.target.value } : item)))
+                  }
+                />
+              </label>
+            </div>
+          ))}
         </div>
+        <button
+          className="nx-ghost"
+          type="button"
+          onClick={() => setMaterials((prev) => [...prev, { name: "New Material", materialRate: "0.00", laborRate: "0.00" }])}
+        >
+          + Add Material
+        </button>
       </section>
 
       <section className="panel">
