@@ -33,6 +33,9 @@ services:
       - DJANGO_SETTINGS_MODULE=config.settings
       - CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
       - CSRF_TRUSTED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - MEDIA_ROOT=/app/media
+      - MEDIA_URL=/media/
     depends_on:
       db:
         condition: service_healthy  # Ensures web waits for db to be 'healthy'
@@ -53,6 +56,9 @@ services:
       - DJANGO_SETTINGS_MODULE=config.settings
       - CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
       - CSRF_TRUSTED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - MEDIA_ROOT=/app/media
+      - MEDIA_URL=/media/
     depends_on:
       db:
         condition: service_healthy
@@ -67,5 +73,7 @@ services:
       - ./widget:/app
     ports:
       - "5173:5173"
+    environment:
+      - VITE_API_BASE=http://localhost:8000
     depends_on:
       - web
