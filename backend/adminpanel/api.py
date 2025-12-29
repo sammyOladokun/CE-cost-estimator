@@ -91,13 +91,6 @@ class AdminTenantViewSet(viewsets.ReadOnlyModelViewSet):
         return qs
 
 
-class AdminLicenseViewSet(viewsets.ModelViewSet):
-    queryset = License.objects.select_related("tenant", "tool").all().order_by("-updated_at")
-    serializer_class = LicenseSerializer
-    permission_classes = [permissions.IsAdminUser]
-    http_method_names = ["get", "patch", "head", "options"]
-
-
 class LicenseSerializer(serializers.ModelSerializer):
     tenant_name = serializers.CharField(source="tenant.name", read_only=True)
     tool_name = serializers.CharField(source="tool.name", read_only=True)
@@ -117,6 +110,13 @@ class LicenseSerializer(serializers.ModelSerializer):
             "metadata",
             "updated_at",
         ]
+
+
+class AdminLicenseViewSet(viewsets.ModelViewSet):
+    queryset = License.objects.select_related("tenant", "tool").all().order_by("-updated_at")
+    serializer_class = LicenseSerializer
+    permission_classes = [permissions.IsAdminUser]
+    http_method_names = ["get", "patch", "head", "options"]
 
 
 class TicketSerializer(serializers.ModelSerializer):
