@@ -57,34 +57,38 @@ const MarketplacePage: React.FC = () => {
         </div>
       </header>
 
-      {loading && <p>Loading tools…</p>}
-      {!loading && (
+      {loading ? (
+        <p>Loading tools...</p>
+      ) : (
         <div className="store-grid">
-          {tools.map((tool) => (
-            <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card">
-              <div className="store-media">
-                {tool.media_url ? (
-                  <video autoPlay loop muted playsInline src={tool.media_url} />
-                ) : (
-                  <div className="store-icon">{tool.icon_url ? <img src={tool.icon_url} alt="" /> : "🛠"}</div>
-                )}
-              </div>
-              <div className="store-meta">
-                <h3>{tool.name}</h3>
-                <p className="nx-subtle">{tool.summary}</p>
-                {discountInfo(tool) ? (
-                  <p className="price-tag">
-                    ${discountInfo(tool)?.discounted.toFixed(2)} /mo{" "}
-                    <span className="nx-subtle">
-                      ({tool.price_monthly ?? 99} before {discountInfo(tool)?.percent}% off)
-                    </span>
-                  </p>
-                ) : (
-                  <p className="price-tag">${tool.price_monthly ?? 99}/mo</p>
-                )}
-              </div>
-            </Link>
-          ))}
+          {tools.map((tool) => {
+            const discount = discountInfo(tool);
+            return (
+              <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card">
+                <div className="store-media">
+                  {tool.media_url ? (
+                    <video autoPlay loop muted playsInline src={tool.media_url} />
+                  ) : (
+                    <div className="store-icon">{tool.icon_url ? <img src={tool.icon_url} alt="" /> : "◎"}</div>
+                  )}
+                </div>
+                <div className="store-meta">
+                  <h3>{tool.name}</h3>
+                  <p className="nx-subtle">{tool.summary}</p>
+                  {discount ? (
+                    <p className="price-tag">
+                      ${discount.discounted.toFixed(2)} /mo{" "}
+                      <span className="nx-subtle">
+                        ({tool.price_monthly ?? 99} before {discount.percent}% off)
+                      </span>
+                    </p>
+                  ) : (
+                    <p className="price-tag">${tool.price_monthly ?? 99}/mo</p>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

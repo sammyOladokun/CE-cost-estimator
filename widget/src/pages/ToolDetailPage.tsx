@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
-
-type Feature = { title?: string; copy?: string; icon?: string };
+import { API_BASE } from "../utils/api";
 
 type Tool = {
   id: string;
   slug: string;
   name: string;
   summary: string;
+  icon_url?: string;
   media_url?: string;
   price_monthly?: number;
-  bento_features?: Feature[];
+  bento_features?: string[] | null;
   coupon_code?: string;
   coupon_percent_off?: number;
   coupon_start?: string;
@@ -21,289 +21,256 @@ type Tool = {
   coupon_usage_count?: number;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
+type OnboardingResponse = {
+  tenant_id: string;
+  license_id: string;
+  status: string;
+  payment_url: string;
+};
+
 const DEMO_TENANT_ID = import.meta.env.VITE_DEMO_TENANT_ID || "";
 
 declare global {
   interface Window {
-    nexWidget?: (config: { tenantId: string; apiBase?: string; toolSlug?: string; sandbox?: boolean }) => void;
+    nexWidget?: (config: { tenantId: string; apiBase?: string; sandbox?: boolean }) => void;
   }
 }
 
 const ToolDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
-  const { user, openAuth, handleAuthError } = useAuth();
+  const { user, openAuth, withAuthHeaders, handleAuthError } = useAuth();
   const [tool, setTool] = useState<Tool | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [licenseStatus, setLicenseStatus] = useState<string | null>(null);
-
-  const [showOnboard, setShowOnboard] = useState(false);
-  const [existing, setExisting] = useState(false);
+  const [licenseStatus, setLicenseStatus] = useState<"unknown" | "none" | "pending" | "active">("unknown");
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
+  const [starting, setStarting] = useState(false);
   const [tenantName, setTenantName] = useState("");
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [tenantId, setTenantId] = useState(DEMO_TENANT_ID);
-  const [saving, setSaving] = useState(false);
-  const [onboardError, setOnboardError] = useState<string | null>(null);
-  const [checkingLicense, setCheckingLicense] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
-  const [polling, setPolling] = useState(false);
-  const discountActive = React.useMemo(() => {
-    if (!tool?.coupon_code || !tool.coupon_percent_off) return null;
-    const today = new Date();
-    if (tool.coupon_start && new Date(tool.coupon_start) > today) return null;
-    if (tool.coupon_end && new Date(tool.coupon_end) < today) return null;
-    if (tool.coupon_usage_limit && (tool.coupon_usage_count || 0) >= tool.coupon_usage_limit) return null;
-    return tool.coupon_percent_off;
-  }, [tool]);
-  const discountedPrice = React.useMemo(() => {
-    if (!tool?.price_monthly) return tool?.price_monthly ?? 0;
-    if (!discountActive) return tool.price_monthly;
-    return (tool.price_monthly * (100 - discountActive)) / 100;
-  }, [tool, discountActive]);
+  const [couponCode, setCouponCode] = useState("");
 
   useEffect(() => {
     const load = async () => {
+      if (!slug) return;
+      setLoading(true);
       try {
         const resp = await fetch(`${API_BASE}/api/marketplace/tools/${slug}`);
-        if (!resp.ok) {
-          throw new Error("Tool not found");
-        }
+        if (!resp.ok) throw new Error("Unable to load tool");
         const data = await resp.json();
         setTool(data);
+        if (data.coupon_code) setCouponCode(data.coupon_code);
       } catch (err: any) {
-        setError(err.message || "Unable to load tool");
+        setStatusMessage(err.message || "Failed to load tool");
       } finally {
         setLoading(false);
       }
     };
-    if (slug) load();
+    load();
   }, [slug]);
 
-  useEffect(() => {
-    const checkLicense = async () => {
-      if (!user) return;
-      setCheckingLicense(true);
-      const headers: HeadersInit = {};
-      if (user.tenant_id) headers["X-Tenant-ID"] = user.tenant_id;
-      if (user.token) headers["Authorization"] = `Token ${user.token}`;
-      const resp = await fetch(`${API_BASE}/api/license/check?tool=${slug}`, { headers, credentials: "include" });
-      if (resp.ok) {
-        const data = await resp.json();
-        setLicenseStatus(data.licensed ? "active" : "inactive");
-        if (data.licensed) setPaymentStatus("Payment confirmed — license active");
-      } else if (resp.status === 401) {
+  const checkLicense = useCallback(async () => {
+    if (!user || !slug) return;
+    try {
+      const resp = await fetch(`${API_BASE}/api/license/check?tool=${slug}`, {
+        headers: withAuthHeaders(),
+        credentials: "include",
+      });
+      if (resp.status === 401) {
         handleAuthError({ code: 401 });
+        return;
       }
-      setCheckingLicense(false);
-    };
-    checkLicense();
-  }, [user, slug]);
+      const data = await resp.json();
+      setLicenseStatus(data.licensed ? "active" : "none");
+    } catch (err) {
+      setLicenseStatus("none");
+    }
+  }, [handleAuthError, slug, user, withAuthHeaders]);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const txStatus = params.get("status");
-    if (txStatus) {
-      setPaymentStatus(txStatus === "successful" ? "Payment successful, finalizing license…" : "Payment failed");
-      setPolling(true);
-    }
-  }, []);
+    if (user) checkLicense();
+  }, [user, checkLicense]);
 
   useEffect(() => {
-    let interval: number | undefined;
-    if (polling && user) {
-      interval = window.setInterval(async () => {
-        const headers: HeadersInit = {};
-        if (user.tenant_id) headers["X-Tenant-ID"] = user.tenant_id;
-        if (user.token) headers["Authorization"] = `Token ${user.token}`;
-        const resp = await fetch(`${API_BASE}/api/license/check?tool=${slug}`, { headers, credentials: "include" });
-        if (resp.ok) {
-          const data = await resp.json();
-          setLicenseStatus(data.licensed ? "active" : "inactive");
-          if (data.licensed) {
-            setPaymentStatus("Payment confirmed — license active");
-            setPolling(false);
-            if (interval) window.clearInterval(interval);
-          }
-        }
-      }, 5000);
-    }
-    return () => {
-      if (interval) window.clearInterval(interval);
-    };
-  }, [polling, user, slug]);
+    if (licenseStatus !== "pending") return;
+    const id = setInterval(() => {
+      checkLicense();
+    }, 5000);
+    return () => clearInterval(id);
+  }, [licenseStatus, checkLicense]);
 
-  const launchSandbox = () => {
+  const discount = useMemo(() => {
+    if (!tool || !tool.coupon_code || !tool.coupon_percent_off) return null;
+    const today = new Date();
+    if (tool.coupon_start && new Date(tool.coupon_start) > today) return null;
+    if (tool.coupon_end && new Date(tool.coupon_end) < today) return null;
+    if (tool.coupon_usage_limit && (tool.coupon_usage_count || 0) >= tool.coupon_usage_limit) return null;
+    const discounted = (tool.price_monthly || 0) * (1 - tool.coupon_percent_off / 100);
+    return { code: tool.coupon_code, percent: tool.coupon_percent_off, amount: discounted };
+  }, [tool]);
+
+  const launchWidget = () => {
     if (!tool) return;
     if (!user) {
       openAuth();
       return;
     }
-    const tenantPrompt = user.tenant_id || DEMO_TENANT_ID || prompt("Enter tenant id for sandbox widget:") || "";
-    window.nexWidget?.({
-      tenantId: tenantPrompt,
-      apiBase: API_BASE,
-      toolSlug: tool.slug,
-      sandbox: true,
-    }) ?? alert("Widget bundle not loaded");
+    const tenantId = user.tenant_id || DEMO_TENANT_ID;
+    if (!tenantId) {
+      setStatusMessage("Tenant ID missing for widget preview.");
+      return;
+    }
+    if (typeof window !== "undefined" && window.nexWidget) {
+      window.nexWidget({
+        tenantId,
+        apiBase: API_BASE,
+        sandbox: licenseStatus !== "active",
+      });
+    } else {
+      setStatusMessage("Widget bundle not loaded. Build the widget or include the bundle script.");
+    }
   };
 
   const startOnboarding = async () => {
-    if (!tool) return;
-    if (!user && !existing) {
+    if (!tool || !slug) return;
+    if (!user) {
       openAuth();
       return;
     }
-    setSaving(true);
-    setOnboardError(null);
+    setStarting(true);
+    setStatusMessage(null);
     try {
-      const payload: Record<string, any> = {
-        tool: tool.slug,
-        email: user?.email || email,
+      const body: Record<string, any> = {
+        tool: slug,
+        email: user.email,
+        coupon_code: couponCode || undefined,
       };
-      if (tool.coupon_code) {
-        payload.coupon_code = tool.coupon_code;
-      }
-      if (user && user.tenant_id) {
-        payload.existing_tenant_id = user.tenant_id;
-      } else if (existing) {
-        payload.existing_tenant_id = tenantId;
+      if (user.tenant_id) {
+        body.existing_tenant_id = user.tenant_id;
       } else {
-        payload.tenant_name = tenantName;
-        payload.full_name = fullName || user?.full_name;
-        payload.password = password;
+        body.tenant_name = tenantName || `${user.email.split("@")[0]}-contractor`;
+        body.full_name = fullName || user.full_name || user.email;
       }
-      const headers: HeadersInit = { "Content-Type": "application/json" };
-      if (user?.token) headers["Authorization"] = `Token ${user.token}`;
       const resp = await fetch(`${API_BASE}/api/onboarding/start`, {
         method: "POST",
-        headers,
-        body: JSON.stringify(payload),
+        headers: withAuthHeaders({ "Content-Type": "application/json" }),
+        credentials: "include",
+        body: JSON.stringify(body),
       });
-      if (!resp.ok) {
-        const err = await resp.json();
-        throw new Error(err.detail || "Unable to start onboarding");
+      if (resp.status === 401) {
+        handleAuthError({ code: 401 });
+        return;
       }
-      const data = await resp.json();
-      const pay = data.payment_url as string;
-      if (pay) {
-        window.location.href = pay;
-      } else {
-        alert("Onboarding started. License created.");
-      }
+      const data: OnboardingResponse | any = await resp.json();
+      if (!resp.ok) throw new Error(data.detail || "Unable to start checkout");
+      setPaymentUrl(data.payment_url);
+      setLicenseStatus(data.status || "pending");
+      setStatusMessage("Checkout link created. Complete payment to activate your license.");
+      if (data.payment_url) window.open(data.payment_url, "_blank");
     } catch (err: any) {
-      setOnboardError(err.message || "Unable to start onboarding");
+      setStatusMessage(err.message || "Unable to start onboarding");
     } finally {
-      setSaving(false);
+      setStarting(false);
     }
   };
 
-  if (loading) return <p className="page-shell">Loading…</p>;
-  if (error || !tool) return <p className="page-shell">Error: {error || "Not found"}</p>;
+  const bentoItems = useMemo(() => {
+    if (!tool?.bento_features) return [];
+    if (Array.isArray(tool.bento_features)) return tool.bento_features;
+    return [];
+  }, [tool]);
+
+  if (loading) {
+    return (
+      <div className="page-shell">
+        <p>Loading tool…</p>
+      </div>
+    );
+  }
+
+  if (!tool) {
+    return (
+      <div className="page-shell">
+        <p className="error">Tool not found.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="page-shell">
-      <button className="backlink" onClick={() => navigate(-1)}>
-        ← Back to marketplace
-      </button>
-      <header className="tool-hero">
+      <header className="page-header">
         <div>
           <p className="nx-kicker">Tool</p>
           <h1>{tool.name}</h1>
           <p className="nx-subtle">{tool.summary}</p>
-          {tool.coupon_code && tool.coupon_percent_off ? (
+          {discount ? (
             <p className="price-tag">
-              Coupon {tool.coupon_code} — {tool.coupon_percent_off}% off
-              {tool.coupon_usage_limit ? ` • ${tool.coupon_usage_count ?? 0}/${tool.coupon_usage_limit} used` : ""}
+              ${discount.amount.toFixed(2)} /mo <span className="nx-subtle">({tool.price_monthly ?? 99} before discount)</span>
             </p>
-          ) : null}
-          <div className="cta-row">
-            <button className="nx-cta" onClick={launchSandbox}>
-              {licenseStatus === "active" ? "Launch" : "Try it (sandbox)"}
-            </button>
-            <button className="nx-ghost" onClick={() => (user ? setShowOnboard(true) : openAuth())}>
-              {licenseStatus === "active"
-                ? "Manage Subscription"
-                : `Get Started — $${discountedPrice.toFixed(2)}/mo`}
-            </button>
-            {user && (
-              <button className="nx-ghost" onClick={() => window.location.reload()} disabled={checkingLicense}>
-                {checkingLicense ? "Checking..." : "Refresh License"}
-              </button>
-            )}
-          </div>
-          {discountActive && (
+          ) : (
+            <p className="price-tag">${tool.price_monthly ?? 99}/mo</p>
+          )}
+          {discount && (
             <p className="nx-subtle">
-              Discount: {discountActive}% off coupon {tool?.coupon_code}
+              Coupon {discount.code} — {discount.percent}% off (while active)
             </p>
           )}
-          {paymentStatus && <p className="nx-subtle">{paymentStatus}</p>}
         </div>
         <div className="hero-media">
           {tool.media_url ? (
             <video autoPlay loop muted playsInline src={tool.media_url} />
+          ) : tool.icon_url ? (
+            <img src={tool.icon_url} alt={tool.name} />
           ) : (
-            <div className="store-icon">🛰</div>
+            <div className="store-icon">Tool</div>
           )}
         </div>
       </header>
 
-      <section className="bento-grid">
-        {(tool.bento_features || []).map((feat, idx) => (
-          <div key={idx} className="bento-card">
-            <p className="nx-kicker">{feat.icon || "◆"}</p>
-            <h4>{feat.title}</h4>
-            <p className="nx-subtle">{feat.copy}</p>
-          </div>
-        ))}
-      </section>
+      <div className="cta-row">
+        <button className="nx-cta" onClick={startOnboarding} disabled={starting || licenseStatus === "active"}>
+          {licenseStatus === "active" ? "License Active" : starting ? "Starting…" : "Get Started"}
+        </button>
+        <button className="nx-ghost" onClick={launchWidget}>
+          {licenseStatus === "active" ? "Launch Tool" : "Try it (sandbox)"}
+        </button>
+      </div>
 
-      {showOnboard && (
-        <div className="gate-overlay">
-          <div className="gate-panel">
-            <p className="nx-kicker">Get Started</p>
-            <h3>{existing ? "Existing member" : "Create your profile"}</h3>
-            <div className="nx-toggle" style={{ marginBottom: 8 }}>
-              <button className={!existing ? "active" : ""} type="button" onClick={() => setExisting(false)}>
-                I'm new
-              </button>
-              <button className={existing ? "active" : ""} type="button" onClick={() => setExisting(true)}>
-                I'm a member
-              </button>
+      <div className="card-grid">
+        <div className="card">
+          <h3>Checkout</h3>
+          <p className="nx-subtle">Apply a coupon and kick off payment.</p>
+          <label className="nx-label">Coupon code</label>
+          <input value={couponCode} onChange={(e) => setCouponCode(e.target.value)} placeholder="Optional" />
+          {!user?.tenant_id && (
+            <>
+              <label className="nx-label">Tenant / Company</label>
+              <input value={tenantName} onChange={(e) => setTenantName(e.target.value)} placeholder="Your company name" />
+              <label className="nx-label">Full name</label>
+              <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your name" />
+            </>
+          )}
+          {paymentUrl && (
+            <div className="nx-subtle" style={{ marginTop: 8 }}>
+              Payment link ready. <a href={paymentUrl} target="_blank" rel="noreferrer">Open checkout</a>
             </div>
-            <div className="gate-form">
-              {!existing && (
-                <>
-                  <input placeholder="Company / Tenant Name" value={tenantName} onChange={(e) => setTenantName(e.target.value)} />
-                  <input placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-                  <input type="password" placeholder="Set Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                </>
-              )}
-              {existing && (
-                <input
-                  placeholder="Tenant ID"
-                  value={tenantId}
-                  onChange={(e) => setTenantId(e.target.value)}
-                  title="Provide your tenant id"
-                />
-              )}
-              <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-              <div className="cta-row" style={{ justifyContent: "flex-end" }}>
-                <button className="nx-ghost" type="button" onClick={() => setShowOnboard(false)}>
-                  Cancel
-                </button>
-                <button className="nx-cta" type="button" onClick={startOnboarding} disabled={saving}>
-                  {saving ? "Working…" : "Continue to payment"}
-                </button>
+          )}
+          {statusMessage && <p className="info">{statusMessage}</p>}
+          {licenseStatus === "pending" && <p className="nx-subtle">Waiting for payment confirmation…</p>}
+          {licenseStatus === "active" && <p className="nx-success">License active for this tool.</p>}
+        </div>
+
+        <div className="card">
+          <h3>Bento Features</h3>
+          <div className="bento-grid">
+            {bentoItems.length === 0 && <p className="nx-subtle">No features listed.</p>}
+            {bentoItems.map((item, idx) => (
+              <div key={idx} className="bento-tile">
+                <p>{item}</p>
               </div>
-              {onboardError && <p className="error">{onboardError}</p>}
-            </div>
+            ))}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
