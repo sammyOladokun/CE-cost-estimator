@@ -13,10 +13,24 @@ cd ..
 docker compose up --build
 
 # in another terminal: make migrations + create superuser
-docker compose exec web python manage.py makemigrations shared marketplace accounts leads pricing
+docker compose exec web python manage.py makemigrations shared marketplace accounts leads pricing adminpanel
 docker compose exec web python manage.py migrate
 docker compose exec web python manage.py createsuperuser
 ```
+
+If you’re running outside Docker and see Django missing, install deps first:
+```bash
+cd backend
+pip install django djangorestframework
+python manage.py makemigrations shared marketplace accounts leads pricing adminpanel
+python manage.py migrate
+```
+
+### Billing (Flutterwave)
+Set these env vars to enable live payment links:
+- `FLW_SECRET_KEY` – your Flutterwave secret key
+- `FLW_CALLBACK_URL` – redirect URL after payment (e.g., https://yourdomain.com/payments/callback)
+Onboarding now creates a pending license and calls Flutterwave; if keys are absent, it falls back to a placeholder link.
 
 ## Seed a demo tool/license (for marketplace + widget)
 ```bash

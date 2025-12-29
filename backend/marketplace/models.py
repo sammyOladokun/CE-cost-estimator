@@ -27,6 +27,15 @@ class Tool(TimeStampedModel):
         help_text="List of feature cards for bento layout; shape: [{title, copy, icon}]",
     )
     is_active = models.BooleanField(default=True)
+    coupon_code = models.CharField(max_length=64, blank=True)
+    coupon_percent_off = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    coupon_start = models.DateField(null=True, blank=True)
+    coupon_end = models.DateField(null=True, blank=True)
+    coupon_usage_limit = models.PositiveIntegerField(default=0, help_text="0 = unlimited")
+    coupon_usage_count = models.PositiveIntegerField(default=0)
+    coupon_tenant = models.ForeignKey(
+        "shared.Tenant", null=True, blank=True, on_delete=models.SET_NULL, related_name="tool_coupons"
+    )
 
     class Meta:
         verbose_name = "Tool"
@@ -85,6 +94,10 @@ class WidgetConfig(TenantScopedModel):
     logo_url = models.URLField(blank=True)
     mark_text = models.CharField(
         max_length=16, default="neX", help_text="Watermark shown in widget corner"
+    )
+    marketing_hook = models.CharField(
+        max_length=255,
+        default="See Your Roof from Space & Get a Technical Estimate in 60 Seconds.",
     )
 
     class Meta:

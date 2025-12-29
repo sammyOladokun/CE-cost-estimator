@@ -13,6 +13,12 @@ type Tool = {
   media_url?: string;
   price_monthly?: number;
   bento_features?: Feature[];
+  coupon_code?: string;
+  coupon_percent_off?: number;
+  coupon_start?: string;
+  coupon_end?: string;
+  coupon_usage_limit?: number;
+  coupon_usage_count?: number;
 };
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
@@ -27,10 +33,11 @@ declare global {
 const ToolDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { user, openAuth } = useAuth();
+  const { user, openAuth, handleAuthError } = useAuth();
   const [tool, setTool] = useState<Tool | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [licenseStatus, setLicenseStatus] = useState<string | null>(null);
 
   const [showOnboard, setShowOnboard] = useState(false);
   const [existing, setExisting] = useState(false);
@@ -41,6 +48,22 @@ const ToolDetailPage: React.FC = () => {
   const [tenantId, setTenantId] = useState(DEMO_TENANT_ID);
   const [saving, setSaving] = useState(false);
   const [onboardError, setOnboardError] = useState<string | null>(null);
+  const [checkingLicense, setCheckingLicense] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
+  const [polling, setPolling] = useState(false);
+  const discountActive = React.useMemo(() => {
+    if (!tool?.coupon_code || !tool.coupon_percent_off) return null;
+    const today = new Date();
+    if (tool.coupon_start && new Date(tool.coupon_start) > today) return null;
+    if (tool.coupon_end && new Date(tool.coupon_end) < today) return null;
+    if (tool.coupon_usage_limit && (tool.coupon_usage_count || 0) >= tool.coupon_usage_limit) return null;
+    return tool.coupon_percent_off;
+  }, [tool]);
+  const discountedPrice = React.useMemo(() => {
+    if (!tool?.price_monthly) return tool?.price_monthly ?? 0;
+    if (!discountActive) return tool.price_monthly;
+    return (tool.price_monthly * (100 - discountActive)) / 100;
+  }, [tool, discountActive]);
 
   useEffect(() => {
     const load = async () => {
@@ -59,6 +82,59 @@ const ToolDetailPage: React.FC = () => {
     };
     if (slug) load();
   }, [slug]);
+
+  useEffect(() => {
+    const checkLicense = async () => {
+      if (!user) return;
+      setCheckingLicense(true);
+      const headers: HeadersInit = {};
+      if (user.tenant_id) headers["X-Tenant-ID"] = user.tenant_id;
+      if (user.token) headers["Authorization"] = `Token ${user.token}`;
+      const resp = await fetch(`${API_BASE}/api/license/check?tool=${slug}`, { headers, credentials: "include" });
+      if (resp.ok) {
+        const data = await resp.json();
+        setLicenseStatus(data.licensed ? "active" : "inactive");
+        if (data.licensed) setPaymentStatus("Payment confirmed — license active");
+      } else if (resp.status === 401) {
+        handleAuthError({ code: 401 });
+      }
+      setCheckingLicense(false);
+    };
+    checkLicense();
+  }, [user, slug]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const txStatus = params.get("status");
+    if (txStatus) {
+      setPaymentStatus(txStatus === "successful" ? "Payment successful, finalizing license…" : "Payment failed");
+      setPolling(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    let interval: number | undefined;
+    if (polling && user) {
+      interval = window.setInterval(async () => {
+        const headers: HeadersInit = {};
+        if (user.tenant_id) headers["X-Tenant-ID"] = user.tenant_id;
+        if (user.token) headers["Authorization"] = `Token ${user.token}`;
+        const resp = await fetch(`${API_BASE}/api/license/check?tool=${slug}`, { headers, credentials: "include" });
+        if (resp.ok) {
+          const data = await resp.json();
+          setLicenseStatus(data.licensed ? "active" : "inactive");
+          if (data.licensed) {
+            setPaymentStatus("Payment confirmed — license active");
+            setPolling(false);
+            if (interval) window.clearInterval(interval);
+          }
+        }
+      }, 5000);
+    }
+    return () => {
+      if (interval) window.clearInterval(interval);
+    };
+  }, [polling, user, slug]);
 
   const launchSandbox = () => {
     if (!tool) return;
@@ -88,6 +164,9 @@ const ToolDetailPage: React.FC = () => {
         tool: tool.slug,
         email: user?.email || email,
       };
+      if (tool.coupon_code) {
+        payload.coupon_code = tool.coupon_code;
+      }
       if (user && user.tenant_id) {
         payload.existing_tenant_id = user.tenant_id;
       } else if (existing) {
@@ -135,14 +214,33 @@ const ToolDetailPage: React.FC = () => {
           <p className="nx-kicker">Tool</p>
           <h1>{tool.name}</h1>
           <p className="nx-subtle">{tool.summary}</p>
+          {tool.coupon_code && tool.coupon_percent_off ? (
+            <p className="price-tag">
+              Coupon {tool.coupon_code} — {tool.coupon_percent_off}% off
+              {tool.coupon_usage_limit ? ` • ${tool.coupon_usage_count ?? 0}/${tool.coupon_usage_limit} used` : ""}
+            </p>
+          ) : null}
           <div className="cta-row">
             <button className="nx-cta" onClick={launchSandbox}>
-              Try it (sandbox)
+              {licenseStatus === "active" ? "Launch" : "Try it (sandbox)"}
             </button>
-            <button className="nx-ghost" onClick={() => setShowOnboard(true)}>
-              Get Started — ${tool.price_monthly ?? 99}/mo
+            <button className="nx-ghost" onClick={() => (user ? setShowOnboard(true) : openAuth())}>
+              {licenseStatus === "active"
+                ? "Manage Subscription"
+                : `Get Started — $${discountedPrice.toFixed(2)}/mo`}
             </button>
+            {user && (
+              <button className="nx-ghost" onClick={() => window.location.reload()} disabled={checkingLicense}>
+                {checkingLicense ? "Checking..." : "Refresh License"}
+              </button>
+            )}
           </div>
+          {discountActive && (
+            <p className="nx-subtle">
+              Discount: {discountActive}% off coupon {tool?.coupon_code}
+            </p>
+          )}
+          {paymentStatus && <p className="nx-subtle">{paymentStatus}</p>}
         </div>
         <div className="hero-media">
           {tool.media_url ? (

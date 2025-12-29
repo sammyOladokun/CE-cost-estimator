@@ -15,6 +15,13 @@ def calculate_actual_area(base_area_sqft: float, pitch: float) -> float:
     return round(base_area_sqft * slope_factor, 2)
 
 
+def apply_rate_from_settings(actual_area: float, material_rate: float, labor_rate: float) -> float:
+    """
+    Compute estimate using tenant-specified material + labor rates.
+    """
+    return round(actual_area * (material_rate + labor_rate), 2)
+
+
 @dataclass
 class ScraperResult:
     zip_code: str

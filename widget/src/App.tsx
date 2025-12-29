@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Link, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Link, Route, Routes, useLocation, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import MarketplacePage from "./pages/MarketplacePage";
 import ToolDetailPage from "./pages/ToolDetailPage";
@@ -78,8 +78,26 @@ const App: React.FC = () => {
         <Route path="/marketplace" element={<MarketplacePage />} />
         <Route path="/marketplace/:slug" element={<ToolDetailPage />} />
         <Route path="/dashboard" element={<AdminDashboardPage />} />
-        <Route path="/tenant" element={<DashboardPage />} />
-        <Route path="/tenant/tools/:slug" element={<DashboardToolPage />} />
+        <Route
+          path="/tenant"
+          element={
+            user ? (
+              <DashboardPage />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
+        <Route
+          path="/tenant/tools/:slug"
+          element={
+            user ? (
+              <DashboardToolPage />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
       </Routes>
       <AuthModal />
     </div>

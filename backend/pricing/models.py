@@ -5,6 +5,7 @@ import uuid
 from django.db import models
 
 from accounts.models import Contractor
+from marketplace.models import Tool
 from shared.tenant import TenantScopedModel
 
 
@@ -36,3 +37,21 @@ class MaterialRate(TenantScopedModel):
 
     def __str__(self) -> str:  # pragma: no cover - repr convenience
         return f"{self.contractor.email} {self.tier} @ {self.price_per_sqft}"
+
+
+class MaterialSetting(TenantScopedModel):
+    """Tenant-specific material + labor rates per tool."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tool = models.ForeignKey(Tool, null=True, blank=True, on_delete=models.SET_NULL, related_name="material_settings")
+    name = models.CharField(max_length=128)
+    material_rate = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    labor_rate = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+
+    class Meta:
+        verbose_name = "Material Setting"
+        verbose_name_plural = "Material Settings"
+        unique_together = ("tenant", "tool", "name")
+
+    def __str__(self) -> str:  # pragma: no cover
+        return f"{self.name}: material {self.material_rate} labor {self.labor_rate}"

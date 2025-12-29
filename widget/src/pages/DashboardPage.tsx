@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles.css";
+import { useAuth } from "../context/AuthContext";
 
 type Tool = {
   id: string;
@@ -37,6 +38,7 @@ const DashboardPage: React.FC = () => {
   const [themeChoice, setThemeChoice] = useState<"frosted" | "smoked">("frosted");
   const [primary, setPrimary] = useState("#0A0F1A");
   const [secondary, setSecondary] = useState("#1F6BFF");
+  const { user, openAuth } = useAuth();
 
   useEffect(() => {
     const load = async () => {
@@ -67,6 +69,19 @@ const DashboardPage: React.FC = () => {
 
   const installed = useMemo(() => tools.slice(0, 2), [tools]);
   const available = useMemo(() => tools.slice(2), [tools]);
+
+  if (!user) {
+    return (
+      <div className="page-shell dashboard">
+        <section className="panel">
+          <p className="nx-subtle">Please log in to manage your tools.</p>
+          <button className="nx-cta" onClick={openAuth} type="button">
+            Login / Register
+          </button>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="page-shell dashboard">
