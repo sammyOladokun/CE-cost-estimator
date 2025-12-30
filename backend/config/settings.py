@@ -122,7 +122,9 @@ if _cors_origins_env:
 else:
     # In dev we fall back to allowing all so widget/marketplace preview work locally.
     CORS_ALLOW_ALL_ORIGINS = True
-    CORS_ALLOW_CREDENTIALS = True
+
+# Allow cookies/tokens over CORS (required because frontend uses credentials: "include")
+CORS_ALLOW_CREDENTIALS = True
 
 # Trust hosts sent by tenants for widget embed / dashboards
 CSRF_TRUSTED_ORIGINS = [
