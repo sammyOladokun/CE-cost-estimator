@@ -7,7 +7,7 @@ type Props = {
 };
 
 const AuthModal: React.FC<Props> = ({ onAuthed }) => {
-  const { showAuth, closeAuth, authMode, setAuthMode, login, register } = useAuth();
+  const { showAuth, closeAuth, authMode, setAuthMode, login, register, authError, setAuthError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -20,6 +20,7 @@ const AuthModal: React.FC<Props> = ({ onAuthed }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setAuthError(null);
     setLoading(true);
     try {
       if (authMode === "login") {
@@ -37,7 +38,7 @@ const AuthModal: React.FC<Props> = ({ onAuthed }) => {
 
   const handleGoogle = () => {
     // Placeholder: trigger your OAuth flow
-    window.open(`${import.meta.env.VITE_API_BASE || "http://localhost:8000"}/api/auth/google`, "_self");
+      window.open(`${import.meta.env.VITE_API_BASE || "http://localhost:8000"}/api/auth/google`, "_self");
   };
 
   return (
@@ -64,7 +65,7 @@ const AuthModal: React.FC<Props> = ({ onAuthed }) => {
           )}
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          {error && <p className="error">{error}</p>}
+        {(error || authError) && <p className="error">{error || authError}</p>}
           <div className="cta-row" style={{ justifyContent: "flex-end" }}>
             <button className="nx-ghost" type="button" onClick={closeAuth}>
               Cancel

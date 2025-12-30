@@ -4,17 +4,21 @@ from django.urls import path
 from marketplace import api as marketplace_api
 from accounts import api as accounts_api
 from adminpanel import api as admin_api
+from adminpanel import views as admin_views
 from rest_framework.routers import DefaultRouter
+from pricing import api as pricing_api
 
 router = DefaultRouter()
 router.register("api/admin/tools", admin_api.AdminToolViewSet, basename="admin-tools")
 router.register("api/admin/tenants", admin_api.AdminTenantViewSet, basename="admin-tenants")
 router.register("api/admin/metrics", admin_api.AdminMetricsViewSet, basename="admin-metrics")
 router.register("api/admin/tickets", admin_api.AdminTicketsViewSet, basename="admin-tickets")
+router.register("api/admin/licenses", admin_api.AdminLicenseViewSet, basename="admin-licenses")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     *router.urls,
+    path("api/admin/upload", admin_views.MediaUploadView.as_view(), name="admin-media-upload"),
     path("api/marketplace/tools", marketplace_api.ToolListView.as_view(), name="tool-list"),
     path("api/marketplace/tools/new", marketplace_api.ToolCreateView.as_view(), name="tool-create"),
     path(
@@ -40,4 +44,7 @@ urlpatterns = [
     path("api/auth/register", accounts_api.RegisterView.as_view(), name="auth-register"),
     path("api/auth/me", accounts_api.MeView.as_view(), name="auth-me"),
     path("api/auth/logout", accounts_api.LogoutView.as_view(), name="auth-logout"),
+    path("api/materials", pricing_api.MaterialSettingBulkView.as_view(), name="materials-bulk"),
+    path("api/payments/flutterwave/webhook", marketplace_api.FlutterwaveWebhookView.as_view(), name="flw-webhook"),
+    path("api/tenant/origin", marketplace_api.TenantOriginView.as_view(), name="tenant-origin"),
 ]

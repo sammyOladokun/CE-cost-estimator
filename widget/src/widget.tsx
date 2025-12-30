@@ -15,6 +15,7 @@ type WidgetTheme = {
   theme: "frosted" | "smoked";
   logo_url?: string;
   mark_text?: string;
+  marketing_hook?: string;
 };
 
 type Estimate = {
@@ -22,6 +23,8 @@ type Estimate = {
   pitch: number;
   actual_area: number;
   estimate_amount: number;
+  material_used?: string;
+  rate_per_sqft?: number;
 };
 
 const defaultTheme: WidgetTheme = {
@@ -30,6 +33,7 @@ const defaultTheme: WidgetTheme = {
   theme: "frosted",
   logo_url: "",
   mark_text: "neX",
+  marketing_hook: "See Your Roof from Space & Get a Technical Estimate in 60 Seconds.",
 };
 
 const glassStyle: React.CSSProperties = {
@@ -65,6 +69,9 @@ export const WidgetShell: React.FC<WidgetConfig> = ({
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hook, setHook] = useState(defaultTheme.marketing_hook || "");
+  const [materials] = useState<string[]>(["Asphalt Shingle", "Metal Roof", "Tile"]);
+  const [materialChoice, setMaterialChoice] = useState<string | null>(null);
 
   const derived = useMemo(() => {
     if (estimate) return estimate;
@@ -86,10 +93,16 @@ export const WidgetShell: React.FC<WidgetConfig> = ({
           },
         });
         setTheme(data);
+        if (data.marketing_hook) {
+          setHook(data.marketing_hook);
+        } else {
+          setHook(defaultTheme.marketing_hook || "");
+        }
         document.documentElement.style.setProperty("--accent", data.secondary_color || defaultTheme.secondary_color);
         document.documentElement.style.setProperty("--secondary", data.primary_color || defaultTheme.primary_color);
       } catch {
         setTheme(defaultTheme);
+        setHook(defaultTheme.marketing_hook || "");
       }
     };
     loadConfig();
@@ -125,7 +138,7 @@ export const WidgetShell: React.FC<WidgetConfig> = ({
       });
 
       const pricing = await fetchJSON<Estimate>(
-        `${base}/api/pricing/estimate?tool=${toolSlug}${sandbox ? "&sandbox=true" : ""}`,
+        `${base}/api/pricing/estimate?tool=${toolSlug}${sandbox ? "&sandbox=true" : ""}${materialChoice ? `&material=${encodeURIComponent(materialChoice)}` : ""}`,
         {
           method: "POST",
           headers: {
@@ -158,8 +171,8 @@ export const WidgetShell: React.FC<WidgetConfig> = ({
     >
       <header className="nx-header">
         <div>
-          <p className="nx-kicker">See Your Roof from Space</p>
-          <h3>neX Landmark Widget</h3>
+          <p className="nx-kicker">neX Landmark Widget</p>
+          <h3>{hook || "See Your Roof from Space & Get a Technical Estimate in 60 Seconds."}</h3>
         </div>
         <div className={`nx-pill ${sandbox ? "freemium" : "live"}`}>{sandbox ? "Sandbox mode" : "Live"}</div>
       </header>
@@ -196,6 +209,17 @@ export const WidgetShell: React.FC<WidgetConfig> = ({
             <label>Actual Area (calc)</label>
             <input value={derived.actual_area} readOnly />
           </div>
+          <div className="nx-field">
+            <label>Material</label>
+            <select value={materialChoice || ""} onChange={(e) => setMaterialChoice(e.target.value || null)}>
+              <option value="">Auto</option>
+              {materials.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </section>
 
@@ -210,6 +234,11 @@ export const WidgetShell: React.FC<WidgetConfig> = ({
             <p className="nx-subtle">
               Actual area {derived.actual_area} sqft • Pitch {derived.pitch}/12
             </p>
+            {estimate?.material_used && (
+              <p className="nx-subtle small">
+                Material: {estimate.material_used} @ ${estimate.rate_per_sqft?.toFixed(2) || "—"}/sqft
+              </p>
+            )}
           </div>
           <div className="nx-card">
             <p className="nx-kicker">Status</p>

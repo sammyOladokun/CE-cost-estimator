@@ -95,7 +95,13 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Celery / worker defaults (use Redis unless overridden)
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", os.getenv("REDIS_URL", "redis://redis:6379/0"))
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)
 
 # API defaults
 REST_FRAMEWORK = {
@@ -116,7 +122,9 @@ if _cors_origins_env:
 else:
     # In dev we fall back to allowing all so widget/marketplace preview work locally.
     CORS_ALLOW_ALL_ORIGINS = True
-    CORS_ALLOW_CREDENTIALS = True
+
+# Allow cookies/tokens over CORS (required because frontend uses credentials: "include")
+CORS_ALLOW_CREDENTIALS = True
 
 # Trust hosts sent by tenants for widget embed / dashboards
 CSRF_TRUSTED_ORIGINS = [
