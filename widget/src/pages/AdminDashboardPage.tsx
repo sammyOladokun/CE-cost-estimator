@@ -228,7 +228,7 @@ const AdminDashboardPage: React.FC = () => {
   return (
     <div className="page-shell dashboard command-surface">
       <div className="command-layout">
-        <aside className="command-sidebar">
+        <aside className="command-sidebar neon-rail">
           <div className="sidebar-brand">
             <p className="nx-kicker">Platform</p>
             <h3>Command Center</h3>
@@ -236,9 +236,9 @@ const AdminDashboardPage: React.FC = () => {
           </div>
           <div className="sidebar-links">
             {navLinks.map((link) => (
-              <a key={link.id} className="sidebar-link" href={`#${link.id}`}>
+              <a key={link.id} className="sidebar-link neon-link" href={`#${link.id}`}>
                 <span className="sidebar-icon">{link.icon}</span>
-                <span>{link.label}</span>
+                <span className="sidebar-label">{link.label}</span>
               </a>
             ))}
           </div>
@@ -246,7 +246,7 @@ const AdminDashboardPage: React.FC = () => {
         </aside>
 
         <main className="command-main">
-          <header className="command-hero" id="overview">
+          <header className="command-hero holo-hero" id="overview">
             <div>
               <p className="nx-kicker">Platform Admin</p>
               <h1>Command Center</h1>
@@ -277,7 +277,7 @@ const AdminDashboardPage: React.FC = () => {
           </header>
 
           <div className="floating-grid">
-            <section className="floating-card" id="filters">
+            <section className="floating-card neon-card panel-wide" id="filters">
               <div className="panel-head">
                 <h3>Filters</h3>
                 <span className="nx-subtle">Scope signals across the grid</span>
@@ -320,7 +320,7 @@ const AdminDashboardPage: React.FC = () => {
               </div>
             </section>
 
-            <section className="floating-card" id="marketplace">
+            <section className="floating-card neon-card panel-wide" id="marketplace">
               <div className="panel-head">
                 <h3>Marketplace Management</h3>
                 <button className="nx-cta neon" type="button" onClick={createTool}>
@@ -474,7 +474,7 @@ const AdminDashboardPage: React.FC = () => {
               </div>
             </section>
 
-            <section className="floating-card" id="tenants">
+            <section className="floating-card neon-card panel-wide" id="tenants">
               <div className="panel-head">
                 <h3>Tenant Oversight</h3>
                 <p className="nx-subtle">Active, trialing, cancelled companies</p>
@@ -499,7 +499,7 @@ const AdminDashboardPage: React.FC = () => {
               </div>
             </section>
 
-            <section className="floating-card" id="billing">
+            <section className="floating-card neon-card" id="billing">
               <div className="panel-head">
                 <h3>Subscription & Billing</h3>
                 <p className="nx-subtle">Revenue, pending payments, coupons</p>
@@ -537,7 +537,7 @@ const AdminDashboardPage: React.FC = () => {
               </div>
             </section>
 
-            <section className="floating-card" id="demos">
+            <section className="floating-card neon-card" id="demos">
               <div className="panel-head">
                 <h3>Demo & Lead Monitoring</h3>
                 <p className="nx-subtle">Track global "Show Demo" clicks</p>
@@ -595,7 +595,7 @@ const AdminDashboardPage: React.FC = () => {
               )}
             </section>
 
-            <section className="floating-card" id="support">
+            <section className="floating-card neon-card" id="support">
               <div className="panel-head">
                 <h3>Support / Tickets</h3>
                 <p className="nx-subtle">Bird's-eye view of issues</p>
@@ -629,7 +629,7 @@ const AdminDashboardPage: React.FC = () => {
               </div>
             </section>
 
-            <section className="floating-card" id="licenses">
+            <section className="floating-card neon-card panel-wide" id="licenses">
               <div className="panel-head">
                 <h3>Licenses</h3>
                 <p className="nx-subtle">Activate or suspend tenant access</p>

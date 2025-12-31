@@ -327,6 +327,19 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
+.chart-card .recharts-cartesian-grid-horizontal line,
+.chart-card .recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.chart-card .recharts-default-tooltip {
+  background: rgba(6, 10, 16, 0.9);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  color: var(--text);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+}
+
 .chart-head {
   display: flex;
   justify-content: space-between;
@@ -699,8 +712,8 @@
 
 .command-layout {
   display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 24px;
+  grid-template-columns: 96px 1fr;
+  gap: 28px;
   align-items: start;
 }
 
@@ -708,12 +721,12 @@
   position: sticky;
   top: 16px;
   height: calc(100vh - 32px);
-  border-radius: 18px;
-  padding: 18px 14px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+  border-radius: 20px;
+  padding: 14px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(0, 212, 255, 0.18);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55), 0 0 40px rgba(0, 212, 255, 0.15);
   overflow: hidden;
 }
 
@@ -722,29 +735,30 @@
 }
 
 .sidebar-links {
-  display: grid;
-  gap: 8px;
-  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 .sidebar-link {
   display: grid;
-  grid-template-columns: 32px 1fr;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  grid-template-rows: 1fr auto;
+  justify-items: center;
+  gap: 4px;
+  padding: 10px 8px;
   color: var(--text);
   text-decoration: none;
   border-radius: 12px;
   border: 1px solid transparent;
   transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .sidebar-link:hover {
   border-color: rgba(0, 212, 255, 0.5);
   box-shadow: 0 10px 30px rgba(0, 212, 255, 0.18);
-  transform: translateX(2px);
+  transform: translateX(2px) translateY(-1px);
 }
 
 .sidebar-icon {
@@ -767,6 +781,36 @@
   pointer-events: none;
 }
 
+.neon-rail {
+  background: linear-gradient(180deg, rgba(31, 107, 255, 0.18), rgba(0, 0, 0, 0.25));
+}
+
+.neon-link {
+  position: relative;
+}
+
+.neon-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 120%, rgba(0, 212, 255, 0.18), transparent 55%);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.neon-link:hover::after {
+  opacity: 1;
+}
+
+.sidebar-label {
+  font-size: 11px;
+  color: var(--subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .command-main {
   display: grid;
   gap: 18px;
@@ -781,6 +825,22 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: linear-gradient(120deg, rgba(31, 107, 255, 0.12), rgba(10, 15, 26, 0.8));
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.holo-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.holo-hero::after {
+  content: "";
+  position: absolute;
+  inset: -40% 20% auto auto;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.12), transparent 60%);
+  filter: blur(40px);
+  pointer-events: none;
 }
 
 .hero-badges {
@@ -809,7 +869,8 @@
 
 .floating-grid {
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 18px;
 }
 
 .floating-card {
@@ -819,6 +880,21 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.floating-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 212, 255, 0.15);
+}
+
+.neon-card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(0, 212, 255, 0.04));
+  border: 1px solid rgba(0, 212, 255, 0.18);
+}
+
+.panel-wide {
+  grid-column: span 2;
 }
 
 .store-card.floating {
@@ -880,6 +956,9 @@
   }
   .command-hero {
     flex-direction: column;
+  }
+  .panel-wide {
+    grid-column: span 1;
   }
 }
 
