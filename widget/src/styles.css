@@ -319,10 +319,12 @@
 .chart-card {
   width: 100%;
   height: 260px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-  border: 1px solid var(--border);
+  background: radial-gradient(circle at 20% 20%, rgba(31, 107, 255, 0.12), rgba(255, 255, 255, 0.01)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
-  padding: 12px;
+  padding: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
 }
 
 .chart-head {
@@ -689,6 +691,196 @@
   margin: 8px 0 0;
   font-size: 12px;
   color: var(--subtle);
+}
+
+.command-surface {
+  position: relative;
+}
+
+.command-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.command-sidebar {
+  position: sticky;
+  top: 16px;
+  height: calc(100vh - 32px);
+  border-radius: 18px;
+  padding: 18px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.sidebar-brand h3 {
+  margin: 2px 0 4px;
+}
+
+.sidebar-links {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.sidebar-link {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.sidebar-link:hover {
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.18);
+  transform: translateX(2px);
+}
+
+.sidebar-icon {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(31, 107, 255, 0.22), rgba(0, 212, 255, 0.08));
+  color: #a5e3ff;
+  font-weight: 700;
+}
+
+.sidebar-glow {
+  position: absolute;
+  inset: 40% -40px auto -40px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.25), transparent 55%);
+  filter: blur(24px);
+  pointer-events: none;
+}
+
+.command-main {
+  display: grid;
+  gap: 18px;
+}
+
+.command-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(120deg, rgba(31, 107, 255, 0.12), rgba(10, 15, 26, 0.8));
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+}
+
+.hero-badges {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.glass-chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-size: 12px;
+  color: #bde9ff;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  min-width: 320px;
+}
+
+.floating-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.floating-card {
+  border-radius: 18px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.store-card.floating {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5);
+}
+
+.glass-table {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+}
+
+.mini-card.pulse {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(31, 107, 255, 0.08));
+}
+
+.mini-card.pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(0, 212, 255, 0.2), transparent 50%);
+  filter: blur(12px);
+  opacity: 0.9;
+}
+
+.aurora {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.04), rgba(0, 212, 255, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.4);
+}
+
+.neon {
+  box-shadow: 0 10px 40px rgba(0, 212, 255, 0.35);
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+.neon-frame {
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 212, 255, 0.18);
+}
+
+.floating-card .panel-head h3 {
+  margin: 0;
+}
+
+.floating-card .panel-head {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 960px) {
+  .command-layout {
+    grid-template-columns: 1fr;
+  }
+  .command-sidebar {
+    position: relative;
+    height: auto;
+  }
+  .command-hero {
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 640px) {
