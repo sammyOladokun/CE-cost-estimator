@@ -40,136 +40,147 @@ const MarketplacePage: React.FC = () => {
   const featured = filtered.slice(0, 3);
   const more = filtered.slice(3);
 
+  const heroStats = [
+    { label: "Premium Tools", value: "25+" },
+    { label: "Active Users", value: "10k+" },
+    { label: "Uptime SLA", value: "99%" },
+    { label: "Expert Support", value: "24/7" },
+  ];
+
   return (
-    <div className="page-shell dashboard command-surface">
-      <div className="command-layout">
-        <aside className="command-sidebar neon-rail">
-          <div className="sidebar-brand">
-            <p className="nx-kicker">Marketplace</p>
-            <h3>Storefront</h3>
-            <p className="nx-subtle">Curated tools</p>
+    <div className="page-shell dashboard">
+      <div className="market-hero">
+        <header className="market-top">
+          <div className="market-brand">Synapse</div>
+          <div className="market-nav">
+            <span>Marketplace</span>
+            <span>Pricing</span>
+            <span>API</span>
+            <span>Company</span>
           </div>
-          <div className="sidebar-links">
-            <div className="sidebar-link neon-link active">
-              <span className="sidebar-icon">[ALL]</span>
-              <span className="sidebar-label">All</span>
-            </div>
-            <div className="sidebar-link neon-link">
-              <span className="sidebar-icon">[AI]</span>
-              <span className="sidebar-label">AI/ML</span>
-            </div>
-            <div className="sidebar-link neon-link">
-              <span className="sidebar-icon">[SAAS]</span>
-              <span className="sidebar-label">SaaS Ops</span>
-            </div>
-            <div className="sidebar-link neon-link">
-              <span className="sidebar-icon">[ANL]</span>
-              <span className="sidebar-label">Analytics</span>
-            </div>
+          <div className="market-auth">
+            <button className="nx-ghost">Log in</button>
+            <button className="nx-cta">Get Access</button>
           </div>
-          <div className="sidebar-glow" />
-        </aside>
+        </header>
 
-        <main className="command-main">
-          <header className="command-hero holo-hero">
+        <div className="market-hero-body">
+          <div className="pill">New Tool: AI Content Audit 2.0</div>
+          <h1 className="market-title">
+            SEO Tools that <span className="market-title-accent">Elevate Your Rankings</span>
+          </h1>
+          <p className="market-sub">
+            A curated marketplace of powerful micro-SaaS utilities designed to boost search engine visibility, analyze competitors, and drive organic traffic with surgical precision.
+          </p>
+          <div className="market-ctas">
+            <a className="market-btn primary" href="#curated">Browse Tools</a>
+            <a className="market-btn ghost" href="#how">How it Works</a>
+          </div>
+          <div className="market-metrics">
+            {heroStats.map((stat) => (
+              <div key={stat.label} className="market-metric">
+                <div className="market-metric-value">{stat.value}</div>
+                <div className="market-metric-label">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="market-content">
+        <section className="market-section" id="curated">
+          <div className="section-head">
             <div>
-              <p className="nx-kicker">neX Multi-Tool Store</p>
-              <h1>Discover & deploy</h1>
-              <p className="nx-subtle">Hover to preview, click to explore. Glassmorphic shelves, neon vibes.</p>
-              <div className="hero-badges">
-                <span className="glass-chip">Live updates</span>
-                <span className="glass-chip">Secure</span>
-                <span className="glass-chip">Fast install</span>
-              </div>
+              <p className="nx-kicker">Curated SEO Utilities</p>
+              <h2>Discover specialized tools engineered for performance.</h2>
             </div>
-            <div className="hero-stats">
-              <div className="mini-card pulse">
-                <p className="nx-kicker">Catalog</p>
-                <h2>{tools.length}</h2>
-                <p className="nx-subtle">Tools listed</p>
-              </div>
-              <div className="mini-card pulse">
-                <p className="nx-kicker">Featured</p>
-                <h2>{featured.length}</h2>
-                <p className="nx-subtle">Top picks</p>
-              </div>
+            <div className="market-search">
+              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search tools..." />
             </div>
-          </header>
-
-          <div className="floating-grid">
-            <section className="floating-card neon-card panel-wide">
-              <div className="panel-head">
-                <h3>Search & Filter</h3>
-                <span className="nx-subtle">Find the right tool fast</span>
-              </div>
-              <div className="vibe-grid">
-                <label className="nx-field">
-                  <span>Search</span>
-                  <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Name or summary" />
-                </label>
-              </div>
-            </section>
-
-            {loading && <section className="floating-card neon-card panel-wide">Loading tools?</section>}
-
-            {!loading && (
-              <>
-                <section className="floating-card neon-card panel-wide">
-                  <div className="panel-head">
-                    <h3>Featured</h3>
-                    <span className="nx-subtle">Curated highlights</span>
-                  </div>
-                  <div className="store-grid">
-                    {featured.map((tool) => (
-                      <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card floating">
-                        <div className="store-media">
-                          {tool.media_url ? (
-                            <video autoPlay loop muted playsInline src={tool.media_url} />
-                          ) : (
-                            <div className="store-icon">{tool.icon_url ? <img src={tool.icon_url} alt="" /> : "?"}</div>
-                          )}
-                        </div>
-                        <div className="store-meta">
-                          <h3>{tool.name}</h3>
-                          <p className="nx-subtle">{tool.summary}</p>
-                          <p className="price-tag">${tool.price_monthly ?? 99}/mo</p>
-                        </div>
-                      </Link>
-                    ))}
-                    {featured.length === 0 && <p className="nx-subtle">No matches yet.</p>}
-                  </div>
-                </section>
-
-                <section className="floating-card neon-card panel-wide">
-                  <div className="panel-head">
-                    <h3>All Tools</h3>
-                    <span className="nx-subtle">Everything in the catalog</span>
-                  </div>
-                  <div className="store-grid">
-                    {more.map((tool) => (
-                      <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card floating">
-                        <div className="store-media">
-                          {tool.media_url ? (
-                            <video autoPlay loop muted playsInline src={tool.media_url} />
-                          ) : (
-                            <div className="store-icon">{tool.icon_url ? <img src={tool.icon_url} alt="" /> : "?"}</div>
-                          )}
-                        </div>
-                        <div className="store-meta">
-                          <h3>{tool.name}</h3>
-                          <p className="nx-subtle">{tool.summary}</p>
-                          <p className="price-tag">${tool.price_monthly ?? 99}/mo</p>
-                        </div>
-                      </Link>
-                    ))}
-                    {more.length === 0 && featured.length > 0 && <p className="nx-subtle">No more tools in this search.</p>}
-                    {filtered.length === 0 && <p className="nx-subtle">No tools match that search.</p>}
-                  </div>
-                </section>
-              </>
-            )}
           </div>
-        </main>
+
+          {loading && <p className="nx-subtle">Loading tools?</p>}
+
+          {!loading && (
+            <>
+              <div className="store-grid market-grid">
+                {featured.map((tool) => (
+                  <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card floating market-card">
+                    <div className="store-meta">
+                      <p className="nx-kicker">Featured</p>
+                      <h3>{tool.name}</h3>
+                      <p className="nx-subtle">{tool.summary}</p>
+                    </div>
+                    <div className="market-card-footer">
+                      <div className="rating">? 4.9</div>
+                      <button className="market-launch">Launch Tool ?</button>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="store-grid market-grid">
+                {more.map((tool) => (
+                  <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card floating market-card">
+                    <div className="store-meta">
+                      <p className="nx-kicker">Utility</p>
+                      <h3>{tool.name}</h3>
+                      <p className="nx-subtle">{tool.summary}</p>
+                    </div>
+                    <div className="market-card-footer">
+                      <div className="rating">? 4.8</div>
+                      <button className="market-launch">Launch Tool ?</button>
+                    </div>
+                  </Link>
+                ))}
+                {filtered.length === 0 && <p className="nx-subtle">No tools match that search.</p>}
+              </div>
+
+              <div className="market-viewall">View all 25+ tools ?</div>
+            </>
+          )}
+        </section>
+
+        <section className="market-feature" id="how">
+          <div className="feature-copy">
+            <h3>Stop guessing. Start ranking.</h3>
+            <p>
+              Most SEO tools overwhelm you with data. Synapse gives you answers. Our curated suite focuses on actionable insights that move the needle.
+            </p>
+            <ul>
+              <li>Real-time data processing</li>
+              <li>Export white-label reports</li>
+              <li>API access for enterprise plans</li>
+            </ul>
+          </div>
+          <div className="feature-visual">Chart preview</div>
+        </section>
+
+        <footer className="market-footer">
+          <div className="footer-brand">Synapse</div>
+          <div className="footer-cols">
+            <div>
+              <p className="nx-kicker">Product</p>
+              <p>All Tools</p>
+              <p>Pricing</p>
+              <p>Enterprise</p>
+              <p>Changelog</p>
+            </div>
+            <div>
+              <p className="nx-kicker">Resources</p>
+              <p>Documentation</p>
+              <p>API Reference</p>
+              <p>Blog</p>
+              <p>Community</p>
+            </div>
+            <div>
+              <p className="nx-kicker">Legal</p>
+              <p>Privacy Policy</p>
+              <p>Terms of Service</p>
+              <p>Cookie Policy</p>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );
