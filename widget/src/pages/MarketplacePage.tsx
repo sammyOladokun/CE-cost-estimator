@@ -41,39 +41,39 @@ const MarketplacePage: React.FC = () => {
   const more = filtered.slice(3);
 
   const heroStats = [
-    { label: "Premium Tools", value: "25+" },
+    { label: "Premium SEO Tools", value: "25+" },
     { label: "Active Users", value: "10k+" },
     { label: "Uptime SLA", value: "99%" },
     { label: "Expert Support", value: "24/7" },
   ];
 
   return (
-    <div className="page-shell dashboard">
-      <div className="market-hero">
+    <div className="page-shell dashboard market-shell">
+      <section className="market-hero2">
         <header className="market-top">
           <div className="market-brand">Synapse</div>
-          <div className="market-nav">
+          <nav className="market-nav">
             <span>Marketplace</span>
             <span>Pricing</span>
             <span>API</span>
             <span>Company</span>
-          </div>
+          </nav>
           <div className="market-auth">
-            <button className="nx-ghost">Log in</button>
-            <button className="nx-cta">Get Access</button>
+            <button className="market-btn ghost sm">Log in</button>
+            <button className="market-btn primary sm">Get Access</button>
           </div>
         </header>
 
         <div className="market-hero-body">
-          <div className="pill">New Tool: AI Content Audit 2.0</div>
+          <div className="pill">New: AI Content Audit 2.0</div>
           <h1 className="market-title">
-            SEO Tools that <span className="market-title-accent">Elevate Your Rankings</span>
+            Micro-SaaS SEO tools that <span className="market-title-accent">elevate your rankings</span>
           </h1>
           <p className="market-sub">
-            A curated marketplace of powerful micro-SaaS utilities designed to boost search engine visibility, analyze competitors, and drive organic traffic with surgical precision.
+            A curated marketplace of powerful SEO micro-utilities designed to boost visibility, dissect competitors, and drive sustainable organic growth with surgical precision.
           </p>
           <div className="market-ctas">
-            <a className="market-btn primary" href="#curated">Browse Tools</a>
+            <a className="market-btn primary" href="#tools">Browse Tools</a>
             <a className="market-btn ghost" href="#how">How it Works</a>
           </div>
           <div className="market-metrics">
@@ -85,103 +85,113 @@ const MarketplacePage: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="market-content">
-        <section className="market-section" id="curated">
-          <div className="section-head">
-            <div>
-              <p className="nx-kicker">Curated SEO Utilities</p>
-              <h2>Discover specialized tools engineered for performance.</h2>
-            </div>
-            <div className="market-search">
-              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search tools..." />
-            </div>
+      <section className="market-section" id="how">
+        <div className="feature-copy">
+          <h3>Stop guessing. Start ranking.</h3>
+          <p>
+            Our micro-SaaS SEO stack focuses on actionable insights instead of noise. Deploy specialized tools for audits, competitive intel, and on-page lift?all with glassy fast UI.
+          </p>
+          <ul>
+            <li>Real-time crawl + on-page scoring</li>
+            <li>Semantic keyword discovery and clustering</li>
+            <li>Competitor gap analysis and link intelligence</li>
+            <li>White-label exports and API access</li>
+          </ul>
+        </div>
+        <div className="feature-visual">Live insights, purple-cyan energy.</div>
+      </section>
+
+      <section className="market-section" id="tools">
+        <div className="section-head">
+          <div>
+            <p className="nx-kicker">Curated SEO Utilities</p>
+            <h2>Discover specialized tools engineered for performance.</h2>
           </div>
-
-          {loading && <p className="nx-subtle">Loading tools?</p>}
-
-          {!loading && (
-            <>
-              <div className="store-grid market-grid">
-                {featured.map((tool) => (
-                  <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card floating market-card">
-                    <div className="store-meta">
-                      <p className="nx-kicker">Featured</p>
-                      <h3>{tool.name}</h3>
-                      <p className="nx-subtle">{tool.summary}</p>
-                    </div>
-                    <div className="market-card-footer">
-                      <div className="rating">? 4.9</div>
-                      <button className="market-launch">Launch Tool ?</button>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-
-              <div className="store-grid market-grid">
-                {more.map((tool) => (
-                  <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card floating market-card">
-                    <div className="store-meta">
-                      <p className="nx-kicker">Utility</p>
-                      <h3>{tool.name}</h3>
-                      <p className="nx-subtle">{tool.summary}</p>
-                    </div>
-                    <div className="market-card-footer">
-                      <div className="rating">? 4.8</div>
-                      <button className="market-launch">Launch Tool ?</button>
-                    </div>
-                  </Link>
-                ))}
-                {filtered.length === 0 && <p className="nx-subtle">No tools match that search.</p>}
-              </div>
-
-              <div className="market-viewall">View all 25+ tools ?</div>
-            </>
-          )}
-        </section>
-
-        <section className="market-feature" id="how">
-          <div className="feature-copy">
-            <h3>Stop guessing. Start ranking.</h3>
-            <p>
-              Most SEO tools overwhelm you with data. Synapse gives you answers. Our curated suite focuses on actionable insights that move the needle.
-            </p>
-            <ul>
-              <li>Real-time data processing</li>
-              <li>Export white-label reports</li>
-              <li>API access for enterprise plans</li>
-            </ul>
+          <div className="market-search">
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search tools..." />
           </div>
-          <div className="feature-visual">Chart preview</div>
-        </section>
+        </div>
 
-        <footer className="market-footer">
-          <div className="footer-brand">Synapse</div>
-          <div className="footer-cols">
-            <div>
-              <p className="nx-kicker">Product</p>
-              <p>All Tools</p>
-              <p>Pricing</p>
-              <p>Enterprise</p>
-              <p>Changelog</p>
+        {loading && <p className="nx-subtle">Loading tools?</p>}
+
+        {!loading && (
+          <>
+            <div className="market-grid">
+              {featured.map((tool) => (
+                <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card floating market-card">
+                  <div className="market-icon-chip">{tool.name?.[0]?.toUpperCase() || "?"}</div>
+                  <div className="store-meta">
+                    <p className="nx-kicker">Featured</p>
+                    <h3>{tool.name}</h3>
+                    <p className="nx-subtle">{tool.summary}</p>
+                  </div>
+                  <div className="market-card-footer">
+                    <div className="rating">? 4.9</div>
+                    <span className="market-launch">Launch Tool ?</span>
+                  </div>
+                </Link>
+              ))}
+              {featured.length === 0 && <p className="nx-subtle">No featured tools yet.</p>}
             </div>
-            <div>
-              <p className="nx-kicker">Resources</p>
-              <p>Documentation</p>
-              <p>API Reference</p>
-              <p>Blog</p>
-              <p>Community</p>
+
+            <div className="market-grid">
+              {more.map((tool) => (
+                <Link key={tool.id} to={`/marketplace/${tool.slug}`} className="store-card floating market-card">
+                  <div className="market-icon-chip">{tool.name?.[0]?.toUpperCase() || "?"}</div>
+                  <div className="store-meta">
+                    <p className="nx-kicker">SEO Utility</p>
+                    <h3>{tool.name}</h3>
+                    <p className="nx-subtle">{tool.summary}</p>
+                  </div>
+                  <div className="market-card-footer">
+                    <div className="rating">? 4.8</div>
+                    <span className="market-launch">Launch Tool ?</span>
+                  </div>
+                </Link>
+              ))}
+              {filtered.length === 0 && <p className="nx-subtle">No tools match that search.</p>}
             </div>
-            <div>
-              <p className="nx-kicker">Legal</p>
-              <p>Privacy Policy</p>
-              <p>Terms of Service</p>
-              <p>Cookie Policy</p>
-            </div>
+          </>
+        )}
+      </section>
+
+      <section className="market-cta-band">
+        <div>
+          <h3>Elevate your SEO stack.</h3>
+          <p className="nx-subtle">Plug in micro-tools, ship faster insights, and keep rankings electric.</p>
+        </div>
+        <a className="market-btn primary" href="#tools">
+          Browse all tools
+        </a>
+      </section>
+
+      <footer className="market-footer">
+        <div className="footer-brand">Synapse</div>
+        <div className="footer-cols">
+          <div>
+            <p className="nx-kicker">Product</p>
+            <p>All Tools</p>
+            <p>Pricing</p>
+            <p>Enterprise</p>
+            <p>Changelog</p>
           </div>
-        </footer>
-      </div>
+          <div>
+            <p className="nx-kicker">Resources</p>
+            <p>Documentation</p>
+            <p>API Reference</p>
+            <p>Blog</p>
+            <p>Community</p>
+          </div>
+          <div>
+            <p className="nx-kicker">Legal</p>
+            <p>Privacy Policy</p>
+            <p>Terms of Service</p>
+            <p>Cookie Policy</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
