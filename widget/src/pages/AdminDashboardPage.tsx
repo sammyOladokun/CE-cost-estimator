@@ -62,14 +62,14 @@ type LicenseRow = { id: string; tenant_name: string; tool_name: string; status: 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
 const navLinks = [
-  { id: "overview", label: "Overview", icon: "⌁" },
-  { id: "filters", label: "Filters", icon: "⚙" },
-  { id: "marketplace", label: "Marketplace", icon: "🛠" },
-  { id: "tenants", label: "Tenants", icon: "🏢" },
-  { id: "billing", label: "Billing", icon: "₿" },
-  { id: "demos", label: "Demos", icon: "▶" },
-  { id: "support", label: "Support", icon: "💬" },
-  { id: "licenses", label: "Licenses", icon: "🔐" },
+  { id: "overview", label: "Overview", icon: "[OVR]" },
+  { id: "filters", label: "Filters", icon: "[FLT]" },
+  { id: "marketplace", label: "Marketplace", icon: "[MKT]" },
+  { id: "tenants", label: "Tenants", icon: "[TEN]" },
+  { id: "billing", label: "Billing", icon: "[BILL]" },
+  { id: "demos", label: "Demos", icon: "[DEMO]" },
+  { id: "support", label: "Support", icon: "[SUP]" },
+  { id: "licenses", label: "Licenses", icon: "[LIC]" },
 ];
 
 const AdminDashboardPage: React.FC = () => {
@@ -410,8 +410,8 @@ const AdminDashboardPage: React.FC = () => {
                       <p className="nx-subtle">{tool.summary}</p>
                       {tool.coupon_code && tool.coupon_percent_off ? (
                         <p className="price-tag">
-                          Coupon {tool.coupon_code} ƒ?" {tool.coupon_percent_off}% off
-                          {tool.coupon_usage_limit ? ` ƒ?› ${tool.coupon_usage_count || 0}/${tool.coupon_usage_limit} used` : ""}
+                          Coupon {tool.coupon_code}: {tool.coupon_percent_off}% off
+                          {tool.coupon_usage_limit ? ` | ${tool.coupon_usage_count || 0}/${tool.coupon_usage_limit} used` : ""}
                         </p>
                       ) : null}
                     </div>
@@ -490,9 +490,9 @@ const AdminDashboardPage: React.FC = () => {
                   <div key={t.id} className="leads-row">
                     <span>{t.name}</span>
                     <span>{t.plan}</span>
-                    <span>{t.tool_count ?? "ƒ?""}</span>
+                    <span>{t.tool_count ?? 0}</span>
                     <span>
-                      Active {t.active_licenses ?? 0} ƒ?› Trial {t.trial_licenses ?? 0} ƒ?› Canceled {t.canceled_licenses ?? 0}
+                      Active {t.active_licenses ?? 0} | Trial {t.trial_licenses ?? 0} | Canceled {t.canceled_licenses ?? 0}
                     </span>
                   </div>
                 ))}
