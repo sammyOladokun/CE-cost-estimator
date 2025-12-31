@@ -761,6 +761,11 @@
   transform: translateX(2px) translateY(-1px);
 }
 
+.sidebar-link.active {
+  border-color: rgba(0, 212, 255, 0.5);
+  box-shadow: 0 12px 34px rgba(0, 212, 255, 0.24);
+}
+
 .sidebar-icon {
   width: 28px;
   height: 28px;
