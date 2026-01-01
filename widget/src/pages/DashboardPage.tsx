@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
-import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy, Storefront } from "@phosphor-icons/react";
+import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy, Hexagon } from "@phosphor-icons/react";
 
 type Tool = {
   id: string;
@@ -41,6 +41,7 @@ const DashboardPage: React.FC = () => {
   const [secondary, setSecondary] = useState("#1F6BFF");
   const [activeTab, setActiveTab] = useState<string>("overview");
   const { user, openAuth } = useAuth();
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -87,7 +88,6 @@ const DashboardPage: React.FC = () => {
 
   const nav = [
     { id: "overview", label: "Overview", Icon: Gauge },
-    { id: "marketplace", label: "Marketplace", Icon: Storefront },
     { id: "my-tools", label: "My Tools", Icon: SquaresFour },
     { id: "tool-settings", label: "Tool Settings", Icon: SlidersHorizontal },
     { id: "billing", label: "Billing", Icon: CreditCard },
@@ -109,7 +109,36 @@ const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className="page-shell dashboard command-surface">
+    <div className="page-shell dashboard command-surface" onClick={() => setShowProfile(false)}>
+      <div className="syn-nav glass-panel dash-nav" onClick={(e) => e.stopPropagation()}>
+        <div className="syn-container syn-nav-inner">
+          <Link to="/" className="syn-brand">
+            <div className="syn-brand-mark">
+              <Hexagon size={18} weight="duotone" />
+            </div>
+            <span>Synapse</span>
+          </Link>
+          <div className="syn-nav-actions">
+            <Link to="/marketplace" className="syn-link nav-with-icon">
+              <Hexagon size={16} weight="duotone" />
+              Marketplace
+            </Link>
+            <div className="profile-wrap" onClick={(e) => e.stopPropagation()}>
+              <button className="profile-pill" onClick={() => setShowProfile((p) => !p)}>
+                <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
+              </button>
+              {showProfile && (
+                <div className="profile-card">
+                  <p className="nx-kicker">Profile</p>
+                  <p className="nx-subtle">{user.full_name}</p>
+                  <p className="nx-subtle">{user.email}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="command-layout">
         <aside className="command-sidebar neon-rail">
           <div className="sidebar-brand">
@@ -122,13 +151,7 @@ const DashboardPage: React.FC = () => {
               <button
                 key={link.id}
                 className={`sidebar-link neon-link ${activeTab === link.id ? "active" : ""}`}
-                onClick={() => {
-                  if (link.id === "marketplace") {
-                    window.location.assign("/marketplace");
-                    return;
-                  }
-                  setActiveTab(link.id);
-                }}
+                onClick={() => setActiveTab(link.id)}
               >
                 <span className="sidebar-icon">
                   <link.Icon size={16} weight="duotone" />

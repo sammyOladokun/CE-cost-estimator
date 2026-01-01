@@ -88,8 +88,8 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className="syn-shell">
-      <nav className="syn-nav glass-panel">
+    <div className="syn-shell" onClick={() => setShowProfileCard(false)}>
+      <nav className="syn-nav glass-panel" onClick={(e) => e.stopPropagation()}>
         <div className="syn-container syn-nav-inner">
           <div className="syn-brand">
             <div className="syn-brand-mark">
@@ -123,7 +123,7 @@ export default function MarketplacePage() {
               </>
             )}
             {user && (
-              <div className="profile-wrap">
+              <div className="profile-wrap" onClick={(e) => e.stopPropagation()}>
                 <button className="profile-pill" onClick={() => setShowProfileCard((p) => !p)}>
                   <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
                 </button>
