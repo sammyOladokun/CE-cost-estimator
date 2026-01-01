@@ -10,6 +10,7 @@ import {
   Lifebuoy,
   IdentificationBadge,
   Hexagon,
+  Storefront,
 } from "@phosphor-icons/react";
 import {
   ResponsiveContainer,
@@ -246,16 +247,11 @@ const AdminDashboardPage: React.FC = () => {
             </div>
             <span>Synapse</span>
           </Link>
-          <div className="syn-nav-links">
-            <span>Marketplace</span>
-            <span>Pricing</span>
-            <span>API</span>
-            <span>Company</span>
-          </div>
+          <div className="syn-nav-links" aria-hidden="true" />
           <div className="syn-nav-actions">
             <Link to="/marketplace" className="syn-link nav-with-icon">
-              <Hexagon size={16} weight="duotone" />
-              Marketplace
+              <Storefront size={16} weight="duotone" />
+              MarketPlace
             </Link>
             <div className="profile-wrap" onClick={(e) => e.stopPropagation()}>
               <button className="profile-pill" onClick={() => setShowProfile((p) => !p)}>
