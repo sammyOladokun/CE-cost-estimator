@@ -4,7 +4,7 @@ import { Link as RouterLink } from "react-router-dom";
 import {
   Hexagon,
   Key,
-  Radar,
+  Target,
   Link as LinkIcon,
   FileText,
   Gauge,
@@ -35,7 +35,7 @@ type Tool = {
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
-const iconCycle = [Key, Radar, LinkIcon, FileText, Gauge, ArrowsLeftRight];
+const iconCycle = [Key, Target, LinkIcon, FileText, Gauge, ArrowsLeftRight];
 
 export default function MarketplacePage() {
   const { openAuth, setAuthMode } = useAuth();
