@@ -251,7 +251,7 @@
 }
 
 .feature-copy li::before {
-  content: "2";
+  content: "Â‚2";
   color: #2dd4bf;
   position: absolute;
   left: 0;
@@ -272,4 +272,110 @@
 .feature-chart .bar {
   background: linear-gradient(180deg, #8b5cf6, #2dd4bf);
   border-radius: 8px 8px 4px 4px;
+}
+
+
+/* Marketplace nav and cards */
+.market-nav-bar {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0 4px;
+  color: #e8ecf7;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #8b5cf6, #2dd4bf);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+}
+
+.nav-links {
+  display: flex;
+  gap: 16px;
+  color: #a0a8c0;
+  font-size: 14px;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.nav-ghost {
+  background: transparent;
+  border: none;
+  color: #a0a8c0;
+  cursor: pointer;
+}
+
+.nav-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #fff;
+  color: #0b0b0f;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tool-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+
+.corner-launch {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.tool-card:hover .corner-launch {
+  opacity: 1;
+}
+
+.reviews {
+  color: #8a91a8;
+  font-weight: 500;
+}
+
+/* glass styles */
+.glass-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tool-card {
+  background: #111218;
+}
+
+.market-feature ul li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
