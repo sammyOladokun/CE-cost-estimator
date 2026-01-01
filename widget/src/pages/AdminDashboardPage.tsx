@@ -4,12 +4,12 @@ import { useAuth } from "../context/AuthContext";
 import {
   ChartLineUp,
   Funnel,
-  Storefront,
   UsersThree,
   CreditCard,
   PresentationChart,
   Lifebuoy,
   IdentificationBadge,
+  Hexagon,
 } from "@phosphor-icons/react";
 import {
   ResponsiveContainer,
@@ -74,7 +74,6 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 const navLinks = [
   { id: "overview", label: "Overview", Icon: ChartLineUp },
   { id: "filters", label: "Filters", Icon: Funnel },
-  { id: "marketplace", label: "Marketplace", Icon: Storefront },
   { id: "tenants", label: "Tenants", Icon: UsersThree },
   { id: "billing", label: "Billing", Icon: CreditCard },
   { id: "demos", label: "Demos", Icon: PresentationChart },
@@ -110,6 +109,7 @@ const AdminDashboardPage: React.FC = () => {
   });
   const { user, openAuth } = useAuth();
   const chartColors = ["#1F6BFF", "#00D4FF", "#7C3AED", "#22C55E", "#F59E0B"];
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -237,7 +237,42 @@ const AdminDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="page-shell dashboard command-surface">
+    <div className="page-shell dashboard command-surface" onClick={() => setShowProfile(false)}>
+      <nav className="syn-nav glass-panel dash-nav" onClick={(e) => e.stopPropagation()}>
+        <div className="syn-container syn-nav-inner">
+          <Link to="/" className="syn-brand">
+            <div className="syn-brand-mark">
+              <Hexagon size={18} weight="duotone" />
+            </div>
+            <span>Synapse</span>
+          </Link>
+          <div className="syn-nav-links">
+            <span>Marketplace</span>
+            <span>Pricing</span>
+            <span>API</span>
+            <span>Company</span>
+          </div>
+          <div className="syn-nav-actions">
+            <Link to="/marketplace" className="syn-link nav-with-icon">
+              <Hexagon size={16} weight="duotone" />
+              Marketplace
+            </Link>
+            <div className="profile-wrap" onClick={(e) => e.stopPropagation()}>
+              <button className="profile-pill" onClick={() => setShowProfile((p) => !p)}>
+                <span className="avatar">{user?.full_name?.[0] || user?.email[0]}</span>
+              </button>
+              {user && showProfile && (
+                <div className="profile-card">
+                  <p className="nx-kicker">Profile</p>
+                  <p className="nx-subtle">{user.full_name}</p>
+                  <p className="nx-subtle">{user.email}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </nav>
+
       <div className="command-layout">
         <aside className="command-sidebar neon-rail">
           <div className="sidebar-brand">
@@ -250,13 +285,7 @@ const AdminDashboardPage: React.FC = () => {
               <button
                 key={link.id}
                 className={`sidebar-link neon-link ${activeSection === link.id ? "active" : ""}`}
-                onClick={() => {
-                  if (link.id === "marketplace") {
-                    window.location.assign("/marketplace");
-                    return;
-                  }
-                  setActiveSection(link.id);
-                }}
+                onClick={() => setActiveSection(link.id)}
               >
                 <span className="sidebar-icon">
                   <link.Icon size={16} weight="duotone" />
