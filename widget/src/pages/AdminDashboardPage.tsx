@@ -250,7 +250,13 @@ const AdminDashboardPage: React.FC = () => {
               <button
                 key={link.id}
                 className={`sidebar-link neon-link ${activeSection === link.id ? "active" : ""}`}
-                onClick={() => setActiveSection(link.id)}
+                onClick={() => {
+                  if (link.id === "marketplace") {
+                    window.location.assign("/marketplace");
+                    return;
+                  }
+                  setActiveSection(link.id);
+                }}
               >
                 <span className="sidebar-icon">
                   <link.Icon size={16} weight="duotone" />

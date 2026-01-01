@@ -38,10 +38,11 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 const iconCycle = [Key, Target, LinkIcon, FileText, Gauge, ArrowsLeftRight];
 
 export default function MarketplacePage() {
-  const { user, openAuth, setAuthMode } = useAuth();
+  const { user, openAuth, setAuthMode, logout } = useAuth();
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [showProfileCard, setShowProfileCard] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -71,6 +72,17 @@ export default function MarketplacePage() {
   const handleAuth = (mode: "login" | "register") => {
     setAuthMode(mode);
     openAuth();
+    setShowProfileCard(false);
+  };
+
+  const dashboardTarget = user ? (user.tenant_id ? "/tenant" : "/dashboard") : null;
+
+  const handleDashboardClick = () => {
+    if (!dashboardTarget) {
+      handleAuth("login");
+      return;
+    }
+    window.location.assign(dashboardTarget);
   };
 
   return (
@@ -84,12 +96,19 @@ export default function MarketplacePage() {
             <span>Synapse</span>
           </div>
           <div className="syn-nav-links">
-            <span>Marketplace</span>
+            <span className="nav-with-icon">
+              <Hexagon size={14} weight="duotone" />
+              Marketplace
+            </span>
             <span>Pricing</span>
             <span>API</span>
             <span>Company</span>
           </div>
           <div className="syn-nav-actions">
+            <button className="syn-link nav-with-icon" onClick={handleDashboardClick}>
+              <Gauge size={16} weight="duotone" />
+              Dashboard
+            </button>
             {!user && (
               <>
                 <button className="syn-link" onClick={() => handleAuth("login")}>
@@ -102,9 +121,24 @@ export default function MarketplacePage() {
               </>
             )}
             {user && (
-              <RouterLink to="/dashboard" className="profile-pill">
-                <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
-              </RouterLink>
+              <div className="profile-wrap">
+                <button className="profile-pill" onClick={() => setShowProfileCard((p) => !p)}>
+                  <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
+                </button>
+                {showProfileCard && (
+                  <div className="profile-card" onClick={(e) => e.stopPropagation()}>
+                    <p className="nx-kicker">Profile</p>
+                    <p className="nx-subtle">{user.full_name}</p>
+                    <p className="nx-subtle">{user.email}</p>
+                    <RouterLink className="nx-ghost" to={dashboardTarget || "/"} onClick={() => setShowProfileCard(false)}>
+                      Go to Dashboard
+                    </RouterLink>
+                    <button className="nx-ghost" type="button" onClick={logout}>
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

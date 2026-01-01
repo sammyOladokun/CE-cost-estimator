@@ -17,6 +17,8 @@ const App: React.FC = () => {
   const inDashboard = location.pathname.startsWith("/dashboard");
   const inTenant = location.pathname.startsWith("/tenant");
   const inMarketplace = location.pathname.startsWith("/marketplace");
+  const isAdmin = user && !user.tenant_id;
+  const isTenantUser = user && !!user.tenant_id;
 
   const handleProfileClick = () => {
     if (!user) {
@@ -40,13 +42,13 @@ const App: React.FC = () => {
                 <span className="icon-label">Marketplace</span>
               </Link>
             )}
-            {!inDashboard && (
+            {isAdmin && !inDashboard && (
               <Link to="/dashboard" className="icon-link">
                 <span className="icon">*</span>
                 <span className="icon-label">Command Center</span>
               </Link>
             )}
-            {!inTenant && (
+            {isTenantUser && !inTenant && (
               <Link to="/tenant" className="icon-link">
                 <span className="icon">*</span>
                 <span className="icon-label">Tenant</span>
@@ -76,12 +78,29 @@ const App: React.FC = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/marketplace" element={<MarketplacePage />} />
         <Route path="/marketplace/:slug" element={<ToolDetailPage />} />
-        <Route path="/dashboard" element={<AdminDashboardPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            user ? (
+              isAdmin ? (
+                <AdminDashboardPage />
+              ) : (
+                <Navigate to="/tenant" replace />
+              )
+            ) : (
+              <Navigate to="/" replace />
+            )
+          }
+        />
         <Route
           path="/tenant"
           element={
             user ? (
-              <DashboardPage />
+              isAdmin ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <DashboardPage />
+              )
             ) : (
               <Navigate to="/" replace />
             )
@@ -91,7 +110,11 @@ const App: React.FC = () => {
           path="/tenant/tools/:slug"
           element={
             user ? (
-              <DashboardToolPage />
+              isAdmin ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <DashboardToolPage />
+              )
             ) : (
               <Navigate to="/" replace />
             )

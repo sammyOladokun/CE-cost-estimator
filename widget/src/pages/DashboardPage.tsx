@@ -87,6 +87,7 @@ const DashboardPage: React.FC = () => {
 
   const nav = [
     { id: "overview", label: "Overview", Icon: Gauge },
+    { id: "marketplace", label: "Marketplace", Icon: SquaresFour },
     { id: "my-tools", label: "My Tools", Icon: SquaresFour },
     { id: "tool-settings", label: "Tool Settings", Icon: SlidersHorizontal },
     { id: "billing", label: "Billing", Icon: CreditCard },
@@ -121,7 +122,13 @@ const DashboardPage: React.FC = () => {
               <button
                 key={link.id}
                 className={`sidebar-link neon-link ${activeTab === link.id ? "active" : ""}`}
-                onClick={() => setActiveTab(link.id)}
+                onClick={() => {
+                  if (link.id === "marketplace") {
+                    window.location.assign("/marketplace");
+                    return;
+                  }
+                  setActiveTab(link.id);
+                }}
               >
                 <span className="sidebar-icon">
                   <link.Icon size={16} weight="duotone" />
