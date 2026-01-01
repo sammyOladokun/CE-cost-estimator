@@ -238,7 +238,7 @@ const AdminDashboardPage: React.FC = () => {
 
   return (
     <div className="page-shell dashboard command-surface" onClick={() => setShowProfile(false)}>
-      <div className="syn-nav glass-panel dash-nav" onClick={(e) => e.stopPropagation()}>
+      <nav className="syn-nav glass-panel dash-nav" onClick={(e) => e.stopPropagation()}>
         <div className="syn-container syn-nav-inner">
           <Link to="/" className="syn-brand">
             <div className="syn-brand-mark">
@@ -246,6 +246,12 @@ const AdminDashboardPage: React.FC = () => {
             </div>
             <span>Synapse</span>
           </Link>
+          <div className="syn-nav-links">
+            <span>Marketplace</span>
+            <span>Pricing</span>
+            <span>API</span>
+            <span>Company</span>
+          </div>
           <div className="syn-nav-actions">
             <Link to="/marketplace" className="syn-link nav-with-icon">
               <Hexagon size={16} weight="duotone" />
@@ -265,7 +271,7 @@ const AdminDashboardPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </nav>
 
       <div className="command-layout">
         <aside className="command-sidebar neon-rail">
