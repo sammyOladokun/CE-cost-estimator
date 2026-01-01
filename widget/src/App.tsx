@@ -54,16 +54,13 @@ const App: React.FC = () => {
             )}
             <div className="profile-pill" onClick={handleProfileClick}>
               {user ? (
-                <>
-                  <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
-                  <span>{user.email}</span>
-                </>
+                <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
               ) : (
                 <span>Login / Register</span>
               )}
             </div>
             {user && showProfileCard && (
-              <div className="profile-card">
+              <div className="profile-card" onClick={(e) => e.stopPropagation()}>
                 <p className="nx-kicker">Profile</p>
                 <p className="nx-subtle">{user.full_name}</p>
                 <p className="nx-subtle">{user.email}</p>

@@ -2,6 +2,16 @@ import React, { useEffect, useState } from "react";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
 import {
+  ChartLineUp,
+  Funnel,
+  Storefront,
+  UsersThree,
+  CreditCard,
+  PresentationChart,
+  Lifebuoy,
+  IdentificationBadge,
+} from "@phosphor-icons/react";
+import {
   ResponsiveContainer,
   LineChart,
   Line,
@@ -62,14 +72,14 @@ type LicenseRow = { id: string; tenant_name: string; tool_name: string; status: 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
 const navLinks = [
-  { id: "overview", label: "Overview", icon: "[OVR]" },
-  { id: "filters", label: "Filters", icon: "[FLT]" },
-  { id: "marketplace", label: "Marketplace", icon: "[MKT]" },
-  { id: "tenants", label: "Tenants", icon: "[TEN]" },
-  { id: "billing", label: "Billing", icon: "[BILL]" },
-  { id: "demos", label: "Demos", icon: "[DEMO]" },
-  { id: "support", label: "Support", icon: "[SUP]" },
-  { id: "licenses", label: "Licenses", icon: "[LIC]" },
+  { id: "overview", label: "Overview", Icon: ChartLineUp },
+  { id: "filters", label: "Filters", Icon: Funnel },
+  { id: "marketplace", label: "Marketplace", Icon: Storefront },
+  { id: "tenants", label: "Tenants", Icon: UsersThree },
+  { id: "billing", label: "Billing", Icon: CreditCard },
+  { id: "demos", label: "Demos", Icon: PresentationChart },
+  { id: "support", label: "Support", Icon: Lifebuoy },
+  { id: "licenses", label: "Licenses", Icon: IdentificationBadge },
 ];
 
 const AdminDashboardPage: React.FC = () => {
@@ -242,7 +252,9 @@ const AdminDashboardPage: React.FC = () => {
                 className={`sidebar-link neon-link ${activeSection === link.id ? "active" : ""}`}
                 onClick={() => setActiveSection(link.id)}
               >
-                <span className="sidebar-icon">{link.icon}</span>
+                <span className="sidebar-icon">
+                  <link.Icon size={16} weight="duotone" />
+                </span>
                 <span className="sidebar-label">{link.label}</span>
               </button>
             ))}
@@ -251,35 +263,37 @@ const AdminDashboardPage: React.FC = () => {
         </aside>
 
         <main className="command-main">
-          <header className="command-hero holo-hero" id="overview">
-            <div>
-              <p className="nx-kicker">Platform Admin</p>
-              <h1>Command Center</h1>
-              <p className="nx-subtle">Glassmorphism cockpit for tools, tenants, billing, demos, and support.</p>
-              <div className="hero-badges">
-                <span className="glass-chip">Live sync</span>
-                <span className="glass-chip">Neon secure</span>
-                <span className="glass-chip">Widget feed</span>
+          {activeSection === "overview" && (
+            <header className="command-hero holo-hero" id="overview">
+              <div>
+                <p className="nx-kicker">Platform Admin</p>
+                <h1>Command Center</h1>
+                <p className="nx-subtle">Glassmorphism cockpit for tools, tenants, billing, demos, and support.</p>
+                <div className="hero-badges">
+                  <span className="glass-chip">Live sync</span>
+                  <span className="glass-chip">Neon secure</span>
+                  <span className="glass-chip">Widget feed</span>
+                </div>
               </div>
-            </div>
-            <div className="hero-stats">
-              <div className="mini-card pulse">
-                <p className="nx-kicker">MRR</p>
-                <h2>${metrics?.mrr ?? 0}</h2>
-                <p className="nx-subtle">Live from licenses</p>
+              <div className="hero-stats">
+                <div className="mini-card pulse">
+                  <p className="nx-kicker">MRR</p>
+                  <h2>${metrics?.mrr ?? 0}</h2>
+                  <p className="nx-subtle">Live from licenses</p>
+                </div>
+                <div className="mini-card pulse">
+                  <p className="nx-kicker">Pending</p>
+                  <h2>${metrics?.pending ?? 0}</h2>
+                  <p className="nx-subtle">Invoices queued</p>
+                </div>
+                <div className="mini-card pulse">
+                  <p className="nx-kicker">Coupons</p>
+                  <h2>{metrics?.coupons ?? 0}</h2>
+                  <p className="nx-subtle">Active boosts</p>
+                </div>
               </div>
-              <div className="mini-card pulse">
-                <p className="nx-kicker">Pending</p>
-                <h2>${metrics?.pending ?? 0}</h2>
-                <p className="nx-subtle">Invoices queued</p>
-              </div>
-              <div className="mini-card pulse">
-                <p className="nx-kicker">Coupons</p>
-                <h2>{metrics?.coupons ?? 0}</h2>
-                <p className="nx-subtle">Active boosts</p>
-              </div>
-            </div>
-          </header>
+            </header>
+          )}
 
           <div className="floating-grid">
             {activeSection === "overview" && (

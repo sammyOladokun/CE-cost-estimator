@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
+import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy } from "@phosphor-icons/react";
 
 type Tool = {
   id: string;
@@ -85,12 +86,12 @@ const DashboardPage: React.FC = () => {
   }
 
   const nav = [
-    { id: "overview", label: "Overview", icon: "[OVR]" },
-    { id: "my-tools", label: "My Tools", icon: "[TLS]" },
-    { id: "tool-settings", label: "Tool Settings", icon: "[CFG]" },
-    { id: "billing", label: "Billing", icon: "[BILL]" },
-    { id: "activity", label: "Activity", icon: "[ACT]" },
-    { id: "support", label: "Support", icon: "[SUP]" },
+    { id: "overview", label: "Overview", Icon: Gauge },
+    { id: "my-tools", label: "My Tools", Icon: SquaresFour },
+    { id: "tool-settings", label: "Tool Settings", Icon: SlidersHorizontal },
+    { id: "billing", label: "Billing", Icon: CreditCard },
+    { id: "activity", label: "Activity", Icon: Pulse },
+    { id: "support", label: "Support", Icon: Lifebuoy },
   ];
 
   const invoiceSamples = [
@@ -122,7 +123,9 @@ const DashboardPage: React.FC = () => {
                 className={`sidebar-link neon-link ${activeTab === link.id ? "active" : ""}`}
                 onClick={() => setActiveTab(link.id)}
               >
-                <span className="sidebar-icon">{link.icon}</span>
+                <span className="sidebar-icon">
+                  <link.Icon size={16} weight="duotone" />
+                </span>
                 <span className="sidebar-label">{link.label}</span>
               </button>
             ))}
@@ -131,35 +134,37 @@ const DashboardPage: React.FC = () => {
         </aside>
 
         <main className="command-main">
-          <header className="command-hero holo-hero">
-            <div>
-              <p className="nx-kicker">neX Command Center</p>
-              <h1>Tenant Dashboard</h1>
-              <p className="nx-subtle">Manage your tools, billing, activity, and support in one neon cockpit.</p>
-              <div className="hero-badges">
-                <span className="glass-chip">Live sync</span>
-                <span className="glass-chip">Frosted UI</span>
-                <span className="glass-chip">Secure tokens</span>
+          {activeTab === "overview" && (
+            <header className="command-hero holo-hero">
+              <div>
+                <p className="nx-kicker">neX Command Center</p>
+                <h1>Tenant Dashboard</h1>
+                <p className="nx-subtle">Manage your tools, billing, activity, and support in one neon cockpit.</p>
+                <div className="hero-badges">
+                  <span className="glass-chip">Live sync</span>
+                  <span className="glass-chip">Frosted UI</span>
+                  <span className="glass-chip">Secure tokens</span>
+                </div>
               </div>
-            </div>
-            <div className="hero-stats">
-              <div className="mini-card pulse">
-                <p className="nx-kicker">Active Tools</p>
-                <h2>{installed.length}</h2>
-                <p className="nx-subtle">Installed</p>
+              <div className="hero-stats">
+                <div className="mini-card pulse">
+                  <p className="nx-kicker">Active Tools</p>
+                  <h2>{installed.length}</h2>
+                  <p className="nx-subtle">Installed</p>
+                </div>
+                <div className="mini-card pulse">
+                  <p className="nx-kicker">Available</p>
+                  <h2>{available.length}</h2>
+                  <p className="nx-subtle">Marketplace</p>
+                </div>
+                <div className="mini-card pulse">
+                  <p className="nx-kicker">Theme</p>
+                  <h2>{themeChoice}</h2>
+                  <p className="nx-subtle">Branding</p>
+                </div>
               </div>
-              <div className="mini-card pulse">
-                <p className="nx-kicker">Available</p>
-                <h2>{available.length}</h2>
-                <p className="nx-subtle">Marketplace</p>
-              </div>
-              <div className="mini-card pulse">
-                <p className="nx-kicker">Theme</p>
-                <h2>{themeChoice}</h2>
-                <p className="nx-subtle">Branding</p>
-              </div>
-            </div>
-          </header>
+            </header>
+          )}
 
           <div className="floating-grid">
             {activeTab === "overview" && (
@@ -218,7 +223,7 @@ const DashboardPage: React.FC = () => {
                         <h3>{tool.name}</h3>
                         <p className="nx-subtle">{tool.summary}</p>
                       </div>
-                      <p className="price-tag">Active · ${tool.price_monthly ?? 99}/mo</p>
+                      <p className="price-tag">Active ï¿½ ${tool.price_monthly ?? 99}/mo</p>
                     </Link>
                   ))}
                   {available.map((tool) => (
@@ -291,7 +296,7 @@ const DashboardPage: React.FC = () => {
                   </div>
                   <div className="leads-row">
                     <span>Mark</span>
-                    <span>{widgetConfig?.mark_text || "—"}</span>
+                    <span>{widgetConfig?.mark_text || "ï¿½"}</span>
                   </div>
                 </div>
               </section>
