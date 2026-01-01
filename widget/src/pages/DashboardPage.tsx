@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
-import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy } from "@phosphor-icons/react";
+import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy, Storefront } from "@phosphor-icons/react";
 
 type Tool = {
   id: string;
@@ -87,7 +87,7 @@ const DashboardPage: React.FC = () => {
 
   const nav = [
     { id: "overview", label: "Overview", Icon: Gauge },
-    { id: "marketplace", label: "Marketplace", Icon: SquaresFour },
+    { id: "marketplace", label: "Marketplace", Icon: Storefront },
     { id: "my-tools", label: "My Tools", Icon: SquaresFour },
     { id: "tool-settings", label: "Tool Settings", Icon: SlidersHorizontal },
     { id: "billing", label: "Billing", Icon: CreditCard },

@@ -1,6 +1,6 @@
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
   Hexagon,
   Key,
@@ -43,6 +43,7 @@ export default function MarketplacePage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showProfileCard, setShowProfileCard] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const load = async () => {
@@ -82,7 +83,8 @@ export default function MarketplacePage() {
       handleAuth("login");
       return;
     }
-    window.location.assign(dashboardTarget);
+    navigate(dashboardTarget);
+    setShowProfileCard(false);
   };
 
   return (
