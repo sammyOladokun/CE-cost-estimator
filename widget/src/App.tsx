@@ -31,7 +31,7 @@ const App: React.FC = () => {
 
   return (
     <div className="shell" onClick={() => setShowProfileCard(false)}>
-      {!inMarketplace && (
+      {!inMarketplace && !inDashboard && !inTenant && (
         <nav className="topnav" onClick={(e) => e.stopPropagation()}>
           <Link to="/" className="brand">
             neXdigitals.agency

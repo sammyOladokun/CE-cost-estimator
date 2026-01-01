@@ -4,12 +4,12 @@ import { useAuth } from "../context/AuthContext";
 import {
   ChartLineUp,
   Funnel,
-  Storefront,
   UsersThree,
   CreditCard,
   PresentationChart,
   Lifebuoy,
   IdentificationBadge,
+  Hexagon,
 } from "@phosphor-icons/react";
 import {
   ResponsiveContainer,
@@ -109,6 +109,7 @@ const AdminDashboardPage: React.FC = () => {
   });
   const { user, openAuth } = useAuth();
   const chartColors = ["#1F6BFF", "#00D4FF", "#7C3AED", "#22C55E", "#F59E0B"];
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -236,7 +237,36 @@ const AdminDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="page-shell dashboard command-surface">
+    <div className="page-shell dashboard command-surface" onClick={() => setShowProfile(false)}>
+      <div className="syn-nav glass-panel dash-nav" onClick={(e) => e.stopPropagation()}>
+        <div className="syn-container syn-nav-inner">
+          <Link to="/" className="syn-brand">
+            <div className="syn-brand-mark">
+              <Hexagon size={18} weight="duotone" />
+            </div>
+            <span>Synapse</span>
+          </Link>
+          <div className="syn-nav-actions">
+            <Link to="/marketplace" className="syn-link nav-with-icon">
+              <Hexagon size={16} weight="duotone" />
+              Marketplace
+            </Link>
+            <div className="profile-wrap" onClick={(e) => e.stopPropagation()}>
+              <button className="profile-pill" onClick={() => setShowProfile((p) => !p)}>
+                <span className="avatar">{user?.full_name?.[0] || user?.email[0]}</span>
+              </button>
+              {user && showProfile && (
+                <div className="profile-card">
+                  <p className="nx-kicker">Profile</p>
+                  <p className="nx-subtle">{user.full_name}</p>
+                  <p className="nx-subtle">{user.email}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="command-layout">
         <aside className="command-sidebar neon-rail">
           <div className="sidebar-brand">

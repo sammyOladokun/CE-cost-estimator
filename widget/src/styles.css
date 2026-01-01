@@ -77,6 +77,11 @@
   gap: 12px;
   align-items: center;
 }
+.nav-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 
 .syn-link {
   background: transparent;
