@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Link, Route, Routes, useLocation, Navigate } from "react-router-dom";
+import { Hexagon } from "@phosphor-icons/react";
 import LandingPage from "./pages/LandingPage";
 import MarketplacePage from "./pages/MarketplacePage";
 import ToolDetailPage from "./pages/ToolDetailPage";
@@ -38,19 +39,19 @@ const App: React.FC = () => {
           <div className="nav-links">
             {!inMarketplace && (
               <Link to="/marketplace" className="icon-link">
-                <span className="icon">*</span>
+                <Hexagon size={14} weight="duotone" className="icon" />
                 <span className="icon-label">Marketplace</span>
               </Link>
             )}
             {isAdmin && !inDashboard && (
               <Link to="/dashboard" className="icon-link">
-                <span className="icon">*</span>
+                <Hexagon size={14} weight="duotone" className="icon" />
                 <span className="icon-label">Command Center</span>
               </Link>
             )}
             {isTenantUser && !inTenant && (
               <Link to="/tenant" className="icon-link">
-                <span className="icon">*</span>
+                <Hexagon size={14} weight="duotone" className="icon" />
                 <span className="icon-label">Tenant</span>
               </Link>
             )}
@@ -66,9 +67,6 @@ const App: React.FC = () => {
                 <p className="nx-kicker">Profile</p>
                 <p className="nx-subtle">{user.full_name}</p>
                 <p className="nx-subtle">{user.email}</p>
-                <button className="nx-ghost" onClick={logout}>
-                  Logout
-                </button>
               </div>
             )}
           </div>

@@ -74,7 +74,6 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 const navLinks = [
   { id: "overview", label: "Overview", Icon: ChartLineUp },
   { id: "filters", label: "Filters", Icon: Funnel },
-  { id: "marketplace", label: "Marketplace", Icon: Storefront },
   { id: "tenants", label: "Tenants", Icon: UsersThree },
   { id: "billing", label: "Billing", Icon: CreditCard },
   { id: "demos", label: "Demos", Icon: PresentationChart },
@@ -250,13 +249,7 @@ const AdminDashboardPage: React.FC = () => {
               <button
                 key={link.id}
                 className={`sidebar-link neon-link ${activeSection === link.id ? "active" : ""}`}
-                onClick={() => {
-                  if (link.id === "marketplace") {
-                    window.location.assign("/marketplace");
-                    return;
-                  }
-                  setActiveSection(link.id);
-                }}
+                onClick={() => setActiveSection(link.id)}
               >
                 <span className="sidebar-icon">
                   <link.Icon size={16} weight="duotone" />

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
-import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy, Storefront } from "@phosphor-icons/react";
+import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy } from "@phosphor-icons/react";
 
 type Tool = {
   id: string;
@@ -87,7 +87,6 @@ const DashboardPage: React.FC = () => {
 
   const nav = [
     { id: "overview", label: "Overview", Icon: Gauge },
-    { id: "marketplace", label: "Marketplace", Icon: Storefront },
     { id: "my-tools", label: "My Tools", Icon: SquaresFour },
     { id: "tool-settings", label: "Tool Settings", Icon: SlidersHorizontal },
     { id: "billing", label: "Billing", Icon: CreditCard },
@@ -122,13 +121,7 @@ const DashboardPage: React.FC = () => {
               <button
                 key={link.id}
                 className={`sidebar-link neon-link ${activeTab === link.id ? "active" : ""}`}
-                onClick={() => {
-                  if (link.id === "marketplace") {
-                    window.location.assign("/marketplace");
-                    return;
-                  }
-                  setActiveTab(link.id);
-                }}
+                onClick={() => setActiveTab(link.id)}
               >
                 <span className="sidebar-icon">
                   <link.Icon size={16} weight="duotone" />
