@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import {
   Hexagon,
   Key,
-  Radar,
+  ChartLineUp,
   LinkSimple,
   FileText,
   Gauge,
@@ -33,7 +33,7 @@ type Tool = {
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
-const icons = [Key, Radar, LinkSimple, FileText, Gauge, ArrowsLeftRight];
+const icons = [Key, ChartLineUp, LinkSimple, FileText, Gauge, ArrowsLeftRight];
 
 const MarketplacePage: React.FC = () => {
   const [tools, setTools] = useState<Tool[]>([]);
