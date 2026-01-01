@@ -110,11 +110,12 @@ const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className="page-shell dashboard command-surface" onClick={() => setShowProfile(false)}>
+    <div className="syn-shell" onClick={() => setShowProfile(false)}>
       <DashboardNav user={user} showProfile={showProfile} onToggleProfile={() => setShowProfile((p) => !p)} />
 
-      <div className="command-layout">
-        <aside className="command-sidebar neon-rail">
+      <div className="page-shell dashboard command-surface">
+        <div className="command-layout">
+          <aside className="command-sidebar neon-rail">
           <div className="sidebar-brand">
             <p className="nx-kicker">Tenant</p>
             <h3>Ops Board</h3>
@@ -374,6 +375,7 @@ const DashboardPage: React.FC = () => {
             )}
           </div>
         </main>
+        </div>
       </div>
     </div>
   );
