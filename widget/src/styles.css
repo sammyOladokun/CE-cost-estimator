@@ -80,6 +80,10 @@
   gap: 12px;
   align-items: center;
 }
+
+.syn-nav-spacer {
+  flex: 1;
+}
 .nav-with-icon {
   display: inline-flex;
   align-items: center;

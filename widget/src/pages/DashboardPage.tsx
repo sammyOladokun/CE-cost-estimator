@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
-import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy, Hexagon, Storefront } from "@phosphor-icons/react";
+import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy, LinkSimple, Storefront } from "@phosphor-icons/react";
 
 type Tool = {
   id: string;
@@ -114,11 +114,11 @@ const DashboardPage: React.FC = () => {
         <div className="syn-container syn-nav-inner">
           <Link to="/" className="syn-brand">
             <div className="syn-brand-mark">
-              <Hexagon size={18} weight="duotone" />
+              <LinkSimple size={18} weight="duotone" />
             </div>
             <span>Synapse</span>
           </Link>
-          <div className="syn-nav-links" aria-hidden="true" />
+          <div className="syn-nav-spacer" aria-hidden="true" />
           <div className="syn-nav-actions">
             <Link to="/marketplace" className="syn-link nav-with-icon">
               <Storefront size={16} weight="duotone" />

@@ -17,6 +17,7 @@ import {
   Compass,
   PlayCircle,
   CheckCircle,
+  LinkSimple,
 } from "@phosphor-icons/react";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
@@ -93,13 +94,13 @@ export default function MarketplacePage() {
         <div className="syn-container syn-nav-inner">
           <div className="syn-brand">
             <div className="syn-brand-mark">
-              <Hexagon size={18} weight="duotone" />
+              <LinkSimple size={18} weight="duotone" />
             </div>
             <span>Synapse</span>
           </div>
           <div className="syn-nav-links">
             <span className="nav-with-icon">
-              <Hexagon size={14} weight="duotone" />
+              <LinkSimple size={14} weight="duotone" />
               Marketplace
             </span>
             <span>Pricing</span>

@@ -9,7 +9,7 @@ import {
   PresentationChart,
   Lifebuoy,
   IdentificationBadge,
-  Hexagon,
+  LinkSimple,
   Storefront,
 } from "@phosphor-icons/react";
 import {
@@ -243,11 +243,11 @@ const AdminDashboardPage: React.FC = () => {
         <div className="syn-container syn-nav-inner">
           <Link to="/" className="syn-brand">
             <div className="syn-brand-mark">
-              <Hexagon size={18} weight="duotone" />
+              <LinkSimple size={18} weight="duotone" />
             </div>
             <span>Synapse</span>
           </Link>
-          <div className="syn-nav-links" aria-hidden="true" />
+          <div className="syn-nav-spacer" aria-hidden="true" />
           <div className="syn-nav-actions">
             <Link to="/marketplace" className="syn-link nav-with-icon">
               <Storefront size={16} weight="duotone" />
