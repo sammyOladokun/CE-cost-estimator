@@ -28,51 +28,53 @@ const App: React.FC = () => {
 
   return (
     <div className="shell" onClick={() => setShowProfileCard(false)}>
-      <nav className="topnav" onClick={(e) => e.stopPropagation()}>
-        <Link to="/" className="brand">
-          neXdigitals.agency
-        </Link>
-        <div className="nav-links">
-          {!inMarketplace && (
-            <Link to="/marketplace" className="icon-link">
-              <span className="icon">🛍</span>
-              <span className="icon-label">Marketplace</span>
-            </Link>
-          )}
-          {!inDashboard && (
-            <Link to="/dashboard" className="icon-link">
-              <span className="icon">📊</span>
-              <span className="icon-label">Command Center</span>
-            </Link>
-          )}
-          {!inTenant && (
-            <Link to="/tenant" className="icon-link">
-              <span className="icon">🧰</span>
-              <span className="icon-label">Tenant</span>
-            </Link>
-          )}
-          <div className="profile-pill" onClick={handleProfileClick}>
-            {user ? (
-              <>
-                <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
-                <span>{user.email}</span>
-              </>
-            ) : (
-              <span>Login / Register</span>
+      {!inMarketplace && (
+        <nav className="topnav" onClick={(e) => e.stopPropagation()}>
+          <Link to="/" className="brand">
+            neXdigitals.agency
+          </Link>
+          <div className="nav-links">
+            {!inMarketplace && (
+              <Link to="/marketplace" className="icon-link">
+                <span className="icon">dY>?</span>
+                <span className="icon-label">Marketplace</span>
+              </Link>
+            )}
+            {!inDashboard && (
+              <Link to="/dashboard" className="icon-link">
+                <span className="icon">dY"S</span>
+                <span className="icon-label">Command Center</span>
+              </Link>
+            )}
+            {!inTenant && (
+              <Link to="/tenant" className="icon-link">
+                <span className="icon">dYų</span>
+                <span className="icon-label">Tenant</span>
+              </Link>
+            )}
+            <div className="profile-pill" onClick={handleProfileClick}>
+              {user ? (
+                <>
+                  <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
+                  <span>{user.email}</span>
+                </>
+              ) : (
+                <span>Login / Register</span>
+              )}
+            </div>
+            {user && showProfileCard && (
+              <div className="profile-card">
+                <p className="nx-kicker">Profile</p>
+                <p className="nx-subtle">{user.full_name}</p>
+                <p className="nx-subtle">{user.email}</p>
+                <button className="nx-ghost" onClick={logout}>
+                  Logout
+                </button>
+              </div>
             )}
           </div>
-          {user && showProfileCard && (
-            <div className="profile-card">
-              <p className="nx-kicker">Profile</p>
-              <p className="nx-subtle">{user.full_name}</p>
-              <p className="nx-subtle">{user.email}</p>
-              <button className="nx-ghost" onClick={logout}>
-                Logout
-              </button>
-            </div>
-          )}
-        </div>
-      </nav>
+        </nav>
+      )}
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/marketplace" element={<MarketplacePage />} />
