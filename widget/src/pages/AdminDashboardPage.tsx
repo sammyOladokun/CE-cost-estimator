@@ -1,17 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
-import {
-  ChartLineUp,
-  Funnel,
-  UsersThree,
-  CreditCard,
-  PresentationChart,
-  Lifebuoy,
-  IdentificationBadge,
-  LinkSimple,
-  Storefront,
-} from "@phosphor-icons/react";
+import { ChartLineUp, Funnel, UsersThree, CreditCard, PresentationChart, Lifebuoy, IdentificationBadge } from "@phosphor-icons/react";
+import DashboardNav from "../components/DashboardNav";
 import {
   ResponsiveContainer,
   LineChart,
@@ -239,35 +230,7 @@ const AdminDashboardPage: React.FC = () => {
 
   return (
     <div className="page-shell dashboard command-surface" onClick={() => setShowProfile(false)}>
-      <nav className="syn-nav glass-panel dash-nav" onClick={(e) => e.stopPropagation()}>
-        <div className="syn-container syn-nav-inner">
-          <Link to="/" className="syn-brand">
-            <div className="syn-brand-mark">
-              <LinkSimple size={18} weight="duotone" />
-            </div>
-            <span>Synapse</span>
-          </Link>
-          <div className="syn-nav-spacer" aria-hidden="true" />
-          <div className="syn-nav-actions">
-            <Link to="/marketplace" className="syn-link nav-with-icon">
-              <Storefront size={16} weight="duotone" />
-              MarketPlace
-            </Link>
-            <div className="profile-wrap" onClick={(e) => e.stopPropagation()}>
-              <button className="profile-pill" onClick={() => setShowProfile((p) => !p)}>
-                <span className="avatar">{user?.full_name?.[0] || user?.email[0]}</span>
-              </button>
-              {user && showProfile && (
-                <div className="profile-card">
-                  <p className="nx-kicker">Profile</p>
-                  <p className="nx-subtle">{user.full_name}</p>
-                  <p className="nx-subtle">{user.email}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
+      <DashboardNav user={user || null} showProfile={showProfile} onToggleProfile={() => setShowProfile((p) => !p)} />
 
       <div className="command-layout">
         <aside className="command-sidebar neon-rail">
