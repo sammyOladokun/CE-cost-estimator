@@ -37,47 +37,72 @@ const AuthModal: React.FC<Props> = ({ onAuthed }) => {
   };
 
   const handleGoogle = () => {
-    // Placeholder: trigger your OAuth flow
-      window.open(`${import.meta.env.VITE_API_BASE || "http://localhost:8000"}/api/auth/google`, "_self");
+    window.open(`${import.meta.env.VITE_API_BASE || "http://localhost:8000"}/api/auth/google`, "_self");
   };
 
-  return (
-    <div className="gate-overlay">
-      <div className="gate-panel">
-        <p className="nx-kicker">Account</p>
-        <div className="nx-toggle" style={{ marginBottom: 8 }}>
-          <button className={authMode === "login" ? "active" : ""} onClick={() => setAuthMode("login")} type="button">
-            Login
-          </button>
-          <button className={authMode === "register" ? "active" : ""} onClick={() => setAuthMode("register")} type="button">
-            Register
+  const LoginCard = (
+    <div className="gate-panel">
+      <p className="nx-kicker">Login</p>
+      <form className="gate-form" onSubmit={handleSubmit}>
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <div className="google-row">
+          <button className="nx-cta secondary" type="button" onClick={handleGoogle}>
+            Continue with Google
           </button>
         </div>
-        <button className="nx-cta" type="button" onClick={handleGoogle} style={{ marginBottom: 10 }}>
-          Continue with Google
-        </button>
-        <form className="gate-form" onSubmit={handleSubmit}>
-          {authMode === "register" && (
-            <>
-              <input placeholder="Tenant / Company" value={tenantName} onChange={(e) => setTenantName(e.target.value)} required />
-              <input placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-            </>
-          )}
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         {(error || authError) && <p className="error">{error || authError}</p>}
-          <div className="cta-row" style={{ justifyContent: "flex-end" }}>
-            <button className="nx-ghost" type="button" onClick={closeAuth}>
-              Cancel
-            </button>
-            <button className="nx-cta" type="submit" disabled={loading}>
-              {loading ? "Please wait…" : authMode === "login" ? "Login" : "Register"}
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="cta-row" style={{ justifyContent: "flex-end" }}>
+          <button className="nx-ghost" type="button" onClick={closeAuth}>
+            Cancel
+          </button>
+          <button className="nx-cta" type="submit" disabled={loading}>
+            {loading ? "Please wait..." : "Login"}
+          </button>
+        </div>
+        <p className="nx-subtle small">
+          Need an account?{" "}
+          <button className="link-inline" type="button" onClick={() => setAuthMode("register")}>
+            Register
+          </button>
+        </p>
+      </form>
     </div>
   );
+
+  const RegisterCard = (
+    <div className="gate-panel">
+      <p className="nx-kicker">Register</p>
+      <form className="gate-form" onSubmit={handleSubmit}>
+        <input placeholder="Tenant / Company" value={tenantName} onChange={(e) => setTenantName(e.target.value)} required />
+        <input placeholder="Full Name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <div className="google-row">
+          <button className="nx-cta secondary" type="button" onClick={handleGoogle}>
+            Continue with Google
+          </button>
+        </div>
+        {(error || authError) && <p className="error">{error || authError}</p>}
+        <div className="cta-row" style={{ justifyContent: "flex-end" }}>
+          <button className="nx-ghost" type="button" onClick={closeAuth}>
+            Cancel
+          </button>
+          <button className="nx-cta" type="submit" disabled={loading}>
+            {loading ? "Please wait..." : "Register"}
+          </button>
+        </div>
+        <p className="nx-subtle small">
+          Already have an account?{" "}
+          <button className="link-inline" type="button" onClick={() => setAuthMode("login")}>
+            Login
+          </button>
+        </p>
+      </form>
+    </div>
+  );
+
+  return <div className="gate-overlay">{authMode === "login" ? LoginCard : RegisterCard}</div>;
 };
 
 export default AuthModal;

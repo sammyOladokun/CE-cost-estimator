@@ -38,7 +38,7 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 const iconCycle = [Key, Target, LinkIcon, FileText, Gauge, ArrowsLeftRight];
 
 export default function MarketplacePage() {
-  const { openAuth, setAuthMode } = useAuth();
+  const { user, openAuth, setAuthMode } = useAuth();
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -90,13 +90,22 @@ export default function MarketplacePage() {
             <span>Company</span>
           </div>
           <div className="syn-nav-actions">
-            <button className="syn-link" onClick={() => handleAuth("login")}>
-              Log in
-            </button>
-            <button className="syn-btn" onClick={() => handleAuth("register")}>
-              <span>Get Started</span>
-              <ArrowRight size={14} weight="duotone" />
-            </button>
+            {!user && (
+              <>
+                <button className="syn-link" onClick={() => handleAuth("login")}>
+                  Log in
+                </button>
+                <button className="syn-btn" onClick={() => handleAuth("register")}>
+                  <span>Get Started</span>
+                  <ArrowRight size={14} weight="duotone" />
+                </button>
+              </>
+            )}
+            {user && (
+              <RouterLink to="/dashboard" className="profile-pill">
+                <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
+              </RouterLink>
+            )}
           </div>
         </div>
       </nav>
