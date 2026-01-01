@@ -36,19 +36,19 @@ const App: React.FC = () => {
           <div className="nav-links">
             {!inMarketplace && (
               <Link to="/marketplace" className="icon-link">
-                <span className="icon">dY>?</span>
+                <span className="icon">*</span>
                 <span className="icon-label">Marketplace</span>
               </Link>
             )}
             {!inDashboard && (
               <Link to="/dashboard" className="icon-link">
-                <span className="icon">dY"S</span>
+                <span className="icon">*</span>
                 <span className="icon-label">Command Center</span>
               </Link>
             )}
             {!inTenant && (
               <Link to="/tenant" className="icon-link">
-                <span className="icon">dYų</span>
+                <span className="icon">*</span>
                 <span className="icon-label">Tenant</span>
               </Link>
             )}
