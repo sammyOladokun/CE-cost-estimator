@@ -17,7 +17,8 @@ class ContractorManager(BaseUserManager):
             raise ValueError("The email address must be set")
         email = self.normalize_email(email)
         tenant = extra_fields.get("tenant")
-        if tenant is None:
+        is_superuser = bool(extra_fields.get("is_superuser"))
+        if tenant is None and not is_superuser:
             raise ValueError("tenant is required for Contractor users")
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -50,11 +51,12 @@ class Contractor(TenantScopedModel, AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.OWNER)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name="contractors", null=True, blank=True)
 
     objects = ContractorManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["full_name", "tenant"]
+    REQUIRED_FIELDS = ["full_name"]
 
     class Meta:
         verbose_name = "Contractor"

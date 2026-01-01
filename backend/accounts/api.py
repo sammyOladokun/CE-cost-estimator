@@ -34,11 +34,13 @@ class LoginView(APIView):
         data = serializer.validated_data
         user = authenticate(request, email=data["email"], password=data["password"])
         if user is None:
-            return Response({"detail": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Invalid email or password", "status": "error"}, status=status.HTTP_400_BAD_REQUEST)
         login(request, user)
         token, _ = Token.objects.get_or_create(user=user)
         return Response(
             {
+                "status": "success",
+                "message": "Login successful",
                 "email": user.email,
                 "full_name": user.full_name,
                 "tenant_id": str(user.tenant_id),

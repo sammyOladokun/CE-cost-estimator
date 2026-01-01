@@ -17,8 +17,8 @@ const App: React.FC = () => {
   const inDashboard = location.pathname.startsWith("/dashboard");
   const inTenant = location.pathname.startsWith("/tenant");
   const inMarketplace = location.pathname.startsWith("/marketplace");
-  const isAdmin = user && !user.tenant_id;
-  const isTenantUser = user && !!user.tenant_id;
+  const isAdmin = !!user?.is_superuser;
+  const isTenantUser = !!user && !isAdmin && !!user.tenant_id;
 
   const handleProfileClick = () => {
     if (!user) {
