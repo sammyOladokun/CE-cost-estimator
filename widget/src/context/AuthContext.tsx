@@ -5,6 +5,7 @@ type User = {
   full_name?: string;
   tenant_id?: string;
   token?: string;
+  is_superuser?: boolean;
 };
 
 type AuthContextValue = {
@@ -57,6 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       full_name: data.full_name,
       tenant_id: data.tenant_id,
       token: data.token,
+      is_superuser: data.is_superuser,
     };
     setUser(nextUser);
     localStorage.setItem("nex:user", JSON.stringify(nextUser));
@@ -82,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       full_name: data.full_name || payload.full_name,
       tenant_id: data.tenant_id,
       token: data.token,
+      is_superuser: data.is_superuser,
     };
     setUser(nextUser);
     localStorage.setItem("nex:user", JSON.stringify(nextUser));

@@ -42,6 +42,7 @@ class LoginView(APIView):
                 "email": user.email,
                 "full_name": user.full_name,
                 "tenant_id": str(user.tenant_id),
+                "is_superuser": user.is_superuser,
                 "token": token.key,
             }
         )
@@ -73,6 +74,7 @@ class RegisterView(APIView):
                 "email": user.email,
                 "full_name": user.full_name,
                 "tenant_id": str(user.tenant_id),
+                "is_superuser": user.is_superuser,
                 "token": token.key,
             },
             status=status.HTTP_201_CREATED,
@@ -89,6 +91,7 @@ class MeView(APIView):
                 "email": user.email,
                 "full_name": user.full_name,
                 "tenant_id": str(user.tenant_id),
+                "is_superuser": user.is_superuser,
             }
         )
 

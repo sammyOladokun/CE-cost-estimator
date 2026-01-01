@@ -76,7 +76,7 @@ export default function MarketplacePage() {
     setShowProfileCard(false);
   };
 
-  const dashboardTarget = user ? (user.tenant_id ? "/tenant" : "/dashboard") : null;
+  const dashboardTarget = user ? (user.is_superuser ? "/dashboard" : user.tenant_id ? "/tenant" : "/dashboard") : null;
 
   const handleDashboardClick = () => {
     if (!dashboardTarget) {
