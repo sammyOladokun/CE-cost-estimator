@@ -288,16 +288,16 @@
 
 .text-gradient-primary {
   background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  background-clip: text;
   -webkit-background-clip: text;
+  color: transparent;
   -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 .text-gradient-primary.animated {
   background: linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed);
   background-size: 200% 200%;
-  display: inline-block;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
   animation-name: textBounce, textShimmer, textDrift;
   animation-duration: 800ms, 4s, 5s;
   animation-timing-function: ease-out, ease-in-out, ease-in-out;

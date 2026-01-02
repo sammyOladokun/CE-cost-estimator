@@ -46,7 +46,7 @@ const AnimatedNumber: React.FC<{ target: number; suffix?: string; delay?: number
   useEffect(() => {
     let raf: number;
     let start: number | null = null;
-    const duration = 900;
+    const duration = 1500;
 
     const tick = (now: number) => {
       if (start === null) {
@@ -69,7 +69,7 @@ const AnimatedNumber: React.FC<{ target: number; suffix?: string; delay?: number
     return () => cancelAnimationFrame(raf);
   }, [target, delay]);
 
-  return <>{value.toLocaleString()} {suffix}</>;
+  return <>{`${value.toLocaleString()}${suffix || ""}`}</>;
 };
 
 export default function MarketplacePage() {
