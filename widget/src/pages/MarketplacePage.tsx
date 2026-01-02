@@ -149,20 +149,20 @@ export default function MarketplacePage() {
 
       <main className="syn-main">
         <section className="syn-hero">
-          <div className="syn-hero-overlay" aria-hidden />
+          <div className="syn-hero-overlay animate-overlay" aria-hidden />
           <div className="syn-container syn-hero-content">
-            <div className="syn-pill">
+            <div className="syn-pill animate-fade" style={{ animationDelay: "60ms" }}>
               <span className="syn-pill-dot" />
               New Tool: AI Content Audit 2.0
             </div>
-            <h1 className="syn-hero-title">
+            <h1 className="syn-hero-title animate-fade" style={{ animationDelay: "120ms" }}>
               SEO Tools that <br />
               <span className="text-gradient-primary">Elevate Your Rankings</span>
             </h1>
-            <p className="syn-hero-sub">
+            <p className="syn-hero-sub animate-fade" style={{ animationDelay: "180ms" }}>
               A curated marketplace of powerful micro-SaaS utilities designed to boost search engine visibility, analyze competitors, and drive organic traffic with surgical precision.
             </p>
-            <div className="syn-cta-row">
+            <div className="syn-cta-row animate-fade" style={{ animationDelay: "240ms" }}>
               <a className="syn-btn primary" href="#tools">
                 <Compass size={18} weight="duotone" />
                 Browse Tools
@@ -173,8 +173,8 @@ export default function MarketplacePage() {
               </a>
             </div>
             <div className="syn-stats">
-              {heroStats.map((stat) => (
-                <div className="syn-stat" key={stat.label}>
+              {heroStats.map((stat, idx) => (
+                <div className="syn-stat animate-fade" key={stat.label} style={{ animationDelay: `${300 + idx * 80}ms` }}>
                   <span className="syn-stat-value">{stat.value}</span>
                   <span className="syn-stat-label">{stat.label}</span>
                 </div>
@@ -212,7 +212,12 @@ export default function MarketplacePage() {
                     const rating = tool.rating ?? 4.8;
                     const reviews = tool.reviews ?? 1200;
                     return (
-                      <RouterLink key={tool.id} to={`/marketplace/${tool.slug}`} className="syn-card glass-card">
+                      <RouterLink
+                        key={tool.id}
+                        to={`/marketplace/${tool.slug}`}
+                        className="syn-card glass-card animate-fade"
+                        style={{ animationDelay: `${idx * 70}ms` }}
+                      >
                         <div className="syn-card-corner">
                           <ArrowUpRight size={18} weight="duotone" />
                         </div>

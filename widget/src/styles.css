@@ -3,6 +3,60 @@
   color-scheme: dark;
 }
 
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleFade {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes overlayPulse {
+  from {
+    opacity: 0.6;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade {
+  opacity: 0;
+  animation: fadeUp 480ms ease forwards;
+  animation-delay: var(--delay, 0ms);
+  will-change: transform, opacity;
+}
+
+.animate-overlay {
+  animation: overlayPulse 720ms ease forwards;
+  transform-origin: center;
+}
+
 .syn-shell {
   min-height: 100vh;
   background: #0b0b0f;
@@ -130,6 +184,8 @@
   background: linear-gradient(135deg, #7c3aed, #06b6d4);
   color: #ffffff;
   box-shadow: 0 0 24px rgba(124, 58, 237, 0.45);
+  background-size: 200% 200%;
+  animation: shimmer 6s ease infinite;
 }
 
 .syn-btn.ghost {
@@ -215,6 +271,7 @@
   gap: 12px;
   flex-wrap: wrap;
   justify-content: center;
+  transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .syn-stats {
@@ -232,6 +289,7 @@
   gap: 4px;
   padding: 12px;
   text-align: center;
+  transition: transform 160ms ease;
 }
 
 .syn-stat-value {
@@ -291,9 +349,15 @@
 .syn-search input {
   background: transparent;
   border: none;
-  outline: none;
   color: #ffffff;
   width: 100%;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+
+.syn-search input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.5), 0 0 0 6px rgba(124, 58, 237, 0.18);
+  transform: translateY(-1px);
 }
 
 .syn-icon-btn {
@@ -323,6 +387,7 @@
   color: #ffffff;
   text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  opacity: 1;
 }
 
 .syn-card:hover {
@@ -741,6 +806,8 @@ body {
   gap: 6px;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  animation: scaleFade 160ms ease;
+  transform-origin: top right;
 }
 
 .page-shell {
