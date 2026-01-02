@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
-import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy, Storefront } from "@phosphor-icons/react";
+import { Gauge, SquaresFour, SlidersHorizontal, CreditCard, Pulse, Lifebuoy } from "@phosphor-icons/react";
+import DashboardNav from "../components/DashboardNav";
 
 type Tool = {
   id: string;
@@ -41,6 +42,7 @@ const DashboardPage: React.FC = () => {
   const [secondary, setSecondary] = useState("#1F6BFF");
   const [activeTab, setActiveTab] = useState<string>("overview");
   const { user, openAuth } = useAuth();
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -87,7 +89,6 @@ const DashboardPage: React.FC = () => {
 
   const nav = [
     { id: "overview", label: "Overview", Icon: Gauge },
-    { id: "marketplace", label: "Marketplace", Icon: Storefront },
     { id: "my-tools", label: "My Tools", Icon: SquaresFour },
     { id: "tool-settings", label: "Tool Settings", Icon: SlidersHorizontal },
     { id: "billing", label: "Billing", Icon: CreditCard },
@@ -109,9 +110,12 @@ const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className="page-shell dashboard command-surface">
-      <div className="command-layout">
-        <aside className="command-sidebar neon-rail">
+    <div className="syn-shell" onClick={() => setShowProfile(false)}>
+      <DashboardNav user={user} showProfile={showProfile} onToggleProfile={() => setShowProfile((p) => !p)} />
+
+      <div className="page-shell dashboard command-surface">
+        <div className="command-layout">
+          <aside className="command-sidebar neon-rail">
           <div className="sidebar-brand">
             <p className="nx-kicker">Tenant</p>
             <h3>Ops Board</h3>
@@ -122,13 +126,7 @@ const DashboardPage: React.FC = () => {
               <button
                 key={link.id}
                 className={`sidebar-link neon-link ${activeTab === link.id ? "active" : ""}`}
-                onClick={() => {
-                  if (link.id === "marketplace") {
-                    window.location.assign("/marketplace");
-                    return;
-                  }
-                  setActiveTab(link.id);
-                }}
+                onClick={() => setActiveTab(link.id)}
               >
                 <span className="sidebar-icon">
                   <link.Icon size={16} weight="duotone" />
@@ -377,6 +375,7 @@ const DashboardPage: React.FC = () => {
             )}
           </div>
         </main>
+        </div>
       </div>
     </div>
   );

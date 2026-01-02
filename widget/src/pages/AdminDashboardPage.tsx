@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
-import {
-  ChartLineUp,
-  Funnel,
-  Storefront,
-  UsersThree,
-  CreditCard,
-  PresentationChart,
-  Lifebuoy,
-  IdentificationBadge,
-} from "@phosphor-icons/react";
+import { ChartLineUp, Funnel, UsersThree, CreditCard, PresentationChart, Lifebuoy, IdentificationBadge } from "@phosphor-icons/react";
+import DashboardNav from "../components/DashboardNav";
 import {
   ResponsiveContainer,
   LineChart,
@@ -74,7 +66,6 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 const navLinks = [
   { id: "overview", label: "Overview", Icon: ChartLineUp },
   { id: "filters", label: "Filters", Icon: Funnel },
-  { id: "marketplace", label: "Marketplace", Icon: Storefront },
   { id: "tenants", label: "Tenants", Icon: UsersThree },
   { id: "billing", label: "Billing", Icon: CreditCard },
   { id: "demos", label: "Demos", Icon: PresentationChart },
@@ -110,6 +101,7 @@ const AdminDashboardPage: React.FC = () => {
   });
   const { user, openAuth } = useAuth();
   const chartColors = ["#1F6BFF", "#00D4FF", "#7C3AED", "#22C55E", "#F59E0B"];
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -237,7 +229,9 @@ const AdminDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="page-shell dashboard command-surface">
+    <div className="page-shell dashboard command-surface" onClick={() => setShowProfile(false)}>
+      <DashboardNav user={user || null} showProfile={showProfile} onToggleProfile={() => setShowProfile((p) => !p)} />
+
       <div className="command-layout">
         <aside className="command-sidebar neon-rail">
           <div className="sidebar-brand">
@@ -250,13 +244,7 @@ const AdminDashboardPage: React.FC = () => {
               <button
                 key={link.id}
                 className={`sidebar-link neon-link ${activeSection === link.id ? "active" : ""}`}
-                onClick={() => {
-                  if (link.id === "marketplace") {
-                    window.location.assign("/marketplace");
-                    return;
-                  }
-                  setActiveSection(link.id);
-                }}
+                onClick={() => setActiveSection(link.id)}
               >
                 <span className="sidebar-icon">
                   <link.Icon size={16} weight="duotone" />

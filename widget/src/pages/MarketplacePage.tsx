@@ -17,6 +17,7 @@ import {
   Compass,
   PlayCircle,
   CheckCircle,
+  LinkSimple,
 } from "@phosphor-icons/react";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
@@ -88,18 +89,18 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className="syn-shell">
-      <nav className="syn-nav glass-panel">
+    <div className="syn-shell" onClick={() => setShowProfileCard(false)}>
+      <nav className="syn-nav glass-panel" onClick={(e) => e.stopPropagation()}>
         <div className="syn-container syn-nav-inner">
           <div className="syn-brand">
             <div className="syn-brand-mark">
-              <Hexagon size={18} weight="duotone" />
+              <LinkSimple size={18} weight="duotone" />
             </div>
             <span>Synapse</span>
           </div>
           <div className="syn-nav-links">
             <span className="nav-with-icon">
-              <Hexagon size={14} weight="duotone" />
+              <LinkSimple size={14} weight="duotone" />
               Marketplace
             </span>
             <span>Pricing</span>
@@ -123,7 +124,7 @@ export default function MarketplacePage() {
               </>
             )}
             {user && (
-              <div className="profile-wrap">
+              <div className="profile-wrap" onClick={(e) => e.stopPropagation()}>
                 <button className="profile-pill" onClick={() => setShowProfileCard((p) => !p)}>
                   <span className="avatar">{user.full_name?.[0] || user.email[0]}</span>
                 </button>
