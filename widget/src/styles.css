@@ -45,6 +45,40 @@
   }
 }
 
+@keyframes textShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes textDrift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes textBounce {
+  0% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .animate-fade {
   opacity: 0;
   animation: fadeUp 480ms ease forwards;
@@ -256,6 +290,18 @@
   background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-primary.animated {
+  background: linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed);
+  background-size: 200% 200%;
+  display: inline-block;
+  animation-name: textBounce, textShimmer, textDrift;
+  animation-duration: 800ms, 4s, 5s;
+  animation-timing-function: ease-out, ease-in-out, ease-in-out;
+  animation-delay: 0ms, 300ms, 0ms;
+  animation-iteration-count: 1, infinite, infinite;
+  animation-fill-mode: forwards, none, none;
 }
 
 .syn-hero-sub {

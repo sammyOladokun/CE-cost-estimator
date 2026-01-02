@@ -157,7 +157,7 @@ export default function MarketplacePage() {
             </div>
             <h1 className="syn-hero-title animate-fade" style={{ animationDelay: "120ms" }}>
               SEO Tools that <br />
-              <span className="text-gradient-primary">Elevate Your Rankings</span>
+              <span className="text-gradient-primary animated">Elevate Your Rankings</span>
             </h1>
             <p className="syn-hero-sub animate-fade" style={{ animationDelay: "180ms" }}>
               A curated marketplace of powerful micro-SaaS utilities designed to boost search engine visibility, analyze competitors, and drive organic traffic with surgical precision.
