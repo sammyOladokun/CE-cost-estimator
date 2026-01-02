@@ -287,54 +287,40 @@
 }
 
 .text-gradient-primary {
-  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
-  background-clip: text;
+  position: relative;
+  display: inline-block;
+  color: #a5c8ff;
+  line-height: 1.1;
+}
+
+.text-gradient-primary::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed);
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  background-repeat: no-repeat;
   -webkit-background-clip: text;
-  -moz-background-clip: text;
+  background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  display: inline-block;
-  background-repeat: no-repeat;
+  pointer-events: none;
+  animation: shimmer 5s ease-in-out infinite;
 }
 
 .text-gradient-primary.animated {
-  background: linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed);
-  background-size: 200% 200%;
-  animation-name: textBounce, textShimmer, textDrift;
-  animation-duration: 800ms, 4s, 5s;
-  animation-timing-function: ease-out, ease-in-out, ease-in-out;
-  animation-delay: 0ms, 300ms, 0ms;
-  animation-iteration-count: 2, infinite, infinite;
-  animation-fill-mode: forwards, none, none;
+  animation: textBounce 900ms ease-out 0ms 2 forwards;
 }
 
-@supports not (-webkit-background-clip: text) {
-  .text-gradient-primary,
-  .text-gradient-primary.animated {
-    background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
-    background-size: 200% 200%;
-    background-repeat: no-repeat;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    animation-name: textBounce;
-    animation-duration: 800ms;
-    animation-iteration-count: 2;
-    animation-fill-mode: forwards;
-  }
+.text-gradient-primary.animated::after {
+  animation: shimmer 5s ease-in-out infinite, textBounce 900ms ease-out 0ms 2 forwards;
 }
 
 @-moz-document url-prefix() {
-  .text-gradient-primary,
-  .text-gradient-primary.animated {
-    background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%) !important;
-    background-size: 200% 200% !important;
-    background-repeat: no-repeat !important;
-    color: transparent !important;
-    -webkit-text-fill-color: transparent !important;
-    animation-name: textBounce !important;
-    animation-duration: 800ms !important;
-    animation-iteration-count: 2 !important;
-    animation-fill-mode: forwards !important;
+  .text-gradient-primary::after {
+    animation: none !important;
+    background-position: 50% 50% !important;
   }
 }
 
