@@ -304,31 +304,36 @@
   animation-duration: 800ms, 4s, 5s;
   animation-timing-function: ease-out, ease-in-out, ease-in-out;
   animation-delay: 0ms, 300ms, 0ms;
-  animation-iteration-count: 1, infinite, infinite;
+  animation-iteration-count: 2, infinite, infinite;
   animation-fill-mode: forwards, none, none;
 }
 
 @supports not (-webkit-background-clip: text) {
   .text-gradient-primary,
   .text-gradient-primary.animated {
-    background: none;
-    color: #a5c8ff;
-    -webkit-text-fill-color: initial;
+    background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+    background-size: 200% 200%;
+    background-repeat: no-repeat;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
     animation-name: textBounce;
     animation-duration: 800ms;
-    animation-iteration-count: 1;
+    animation-iteration-count: 2;
+    animation-fill-mode: forwards;
   }
 }
 
 @-moz-document url-prefix() {
   .text-gradient-primary,
   .text-gradient-primary.animated {
-    background: none !important;
-    color: #a5c8ff !important;
-    -webkit-text-fill-color: initial !important;
+    background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%) !important;
+    background-size: 200% 200% !important;
+    background-repeat: no-repeat !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
     animation-name: textBounce !important;
     animation-duration: 800ms !important;
-    animation-iteration-count: 1 !important;
+    animation-iteration-count: 2 !important;
     animation-fill-mode: forwards !important;
   }
 }
