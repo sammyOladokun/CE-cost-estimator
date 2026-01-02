@@ -751,6 +751,11 @@ body {
   gap: 18px;
 }
 
+.page-shell.dashboard {
+  max-width: none;
+  width: 100%;
+}
+
 .panel,
 .panel-wide {
   background: rgba(255, 255, 255, 0.04);
