@@ -320,6 +320,19 @@
   }
 }
 
+@-moz-document url-prefix() {
+  .text-gradient-primary,
+  .text-gradient-primary.animated {
+    background: none !important;
+    color: #a5c8ff !important;
+    -webkit-text-fill-color: initial !important;
+    animation-name: textBounce !important;
+    animation-duration: 800ms !important;
+    animation-iteration-count: 1 !important;
+    animation-fill-mode: forwards !important;
+  }
+}
+
 .syn-hero-sub {
   color: #b8bed6;
   max-width: 720px;
