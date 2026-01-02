@@ -229,32 +229,33 @@ const AdminDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="page-shell dashboard command-surface" onClick={() => setShowProfile(false)}>
+    <div className="syn-shell" onClick={() => setShowProfile(false)}>
       <DashboardNav user={user || null} showProfile={showProfile} onToggleProfile={() => setShowProfile((p) => !p)} />
 
-      <div className="command-layout">
-        <aside className="command-sidebar neon-rail">
-          <div className="sidebar-brand">
-            <p className="nx-kicker">Platform</p>
-            <h3>Command Center</h3>
-            <p className="nx-subtle">Neural ops board</p>
-          </div>
-          <div className="sidebar-links">
-            {navLinks.map((link) => (
-              <button
-                key={link.id}
-                className={`sidebar-link neon-link ${activeSection === link.id ? "active" : ""}`}
-                onClick={() => setActiveSection(link.id)}
-              >
-                <span className="sidebar-icon">
-                  <link.Icon size={16} weight="duotone" />
-                </span>
-                <span className="sidebar-label">{link.label}</span>
-              </button>
-            ))}
-          </div>
-          <div className="sidebar-glow" />
-        </aside>
+      <div className="page-shell dashboard command-surface">
+        <div className="command-layout">
+          <aside className="command-sidebar neon-rail">
+            <div className="sidebar-brand">
+              <p className="nx-kicker">Platform</p>
+              <h3>Command Center</h3>
+              <p className="nx-subtle">Neural ops board</p>
+            </div>
+            <div className="sidebar-links">
+              {navLinks.map((link) => (
+                <button
+                  key={link.id}
+                  className={`sidebar-link neon-link ${activeSection === link.id ? "active" : ""}`}
+                  onClick={() => setActiveSection(link.id)}
+                >
+                  <span className="sidebar-icon">
+                    <link.Icon size={16} weight="duotone" />
+                  </span>
+                  <span className="sidebar-label">{link.label}</span>
+                </button>
+              ))}
+            </div>
+            <div className="sidebar-glow" />
+          </aside>
 
         <main className="command-main">
           {activeSection === "overview" && (
@@ -756,7 +757,8 @@ const AdminDashboardPage: React.FC = () => {
         </main>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default AdminDashboardPage;
