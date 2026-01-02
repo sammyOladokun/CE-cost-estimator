@@ -114,7 +114,7 @@ const DashboardPage: React.FC = () => {
       <DashboardNav user={user} showProfile={showProfile} onToggleProfile={() => setShowProfile((p) => !p)} />
 
       <div className="page-shell dashboard command-surface">
-        <div className="command-layout">
+        <div className="dashboard-main-card">
           <aside className="command-sidebar neon-rail">
           <div className="sidebar-brand">
             <p className="nx-kicker">Tenant</p>
@@ -138,7 +138,8 @@ const DashboardPage: React.FC = () => {
           <div className="sidebar-glow" />
         </aside>
 
-        <main className="command-main">
+        <div className="dashboard-body-scroll">
+          <main className="command-main">
           {activeTab === "overview" && (
             <header className="command-hero holo-hero">
               <div>
@@ -375,9 +376,10 @@ const DashboardPage: React.FC = () => {
             )}
           </div>
         </main>
-        </div>
       </div>
     </div>
+  </div>
+</div>
   );
 };
 
