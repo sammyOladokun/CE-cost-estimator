@@ -38,6 +38,40 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 
 const iconCycle = [Key, Target, LinkIcon, FileText, Gauge, ArrowsLeftRight];
 
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+const AnimatedNumber: React.FC<{ target: number; suffix?: string; delay?: number }> = ({ target, suffix = "", delay = 0 }) => {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    let raf: number;
+    let start: number | null = null;
+    const duration = 1500;
+
+    const tick = (now: number) => {
+      if (start === null) {
+        start = now + (delay || 0);
+      }
+      const elapsed = now - start;
+      if (elapsed < 0) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOutCubic(progress);
+      setValue(Math.round(target * eased));
+      if (progress < 1) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, delay]);
+
+  return <>{`${value.toLocaleString()}${suffix || ""}`}</>;
+};
+
 export default function MarketplacePage() {
   const { user, openAuth, setAuthMode, logout } = useAuth();
   const [tools, setTools] = useState<Tool[]>([]);
@@ -65,10 +99,10 @@ export default function MarketplacePage() {
   );
 
   const heroStats = [
-    { label: "Premium Tools", value: "25+" },
-    { label: "Active Users", value: "10k+" },
-    { label: "Uptime SLA", value: "99%" },
-    { label: "Expert Support", value: "24/7" },
+    { label: "Premium Tools", value: 25, suffix: "+" },
+    { label: "Active Users", value: 10, suffix: "k+" },
+    { label: "Uptime SLA", value: 99, suffix: "%" },
+    { label: "Expert Support", value: 24, suffix: "/7" },
   ];
 
   const handleAuth = (mode: "login" | "register") => {
@@ -157,7 +191,9 @@ export default function MarketplacePage() {
             </div>
             <h1 className="syn-hero-title animate-fade" style={{ animationDelay: "120ms" }}>
               SEO Tools that <br />
-              <span className="text-gradient-primary">Elevate Your Rankings</span>
+              <span className="text-gradient-primary animated" data-text="Elevate Your Rankings">
+                Elevate Your Rankings
+              </span>
             </h1>
             <p className="syn-hero-sub animate-fade" style={{ animationDelay: "180ms" }}>
               A curated marketplace of powerful micro-SaaS utilities designed to boost search engine visibility, analyze competitors, and drive organic traffic with surgical precision.
@@ -175,7 +211,9 @@ export default function MarketplacePage() {
             <div className="syn-stats">
               {heroStats.map((stat, idx) => (
                 <div className="syn-stat animate-fade" key={stat.label} style={{ animationDelay: `${300 + idx * 80}ms` }}>
-                  <span className="syn-stat-value">{stat.value}</span>
+                  <span className="syn-stat-value">
+                    <AnimatedNumber target={stat.value} suffix={stat.suffix} delay={300 + idx * 80} />
+                  </span>
                   <span className="syn-stat-label">{stat.label}</span>
                 </div>
               ))}

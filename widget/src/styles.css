@@ -45,6 +45,40 @@
   }
 }
 
+@keyframes textShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes textDrift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes textBounce {
+  0% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .animate-fade {
   opacity: 0;
   animation: fadeUp 480ms ease forwards;
@@ -253,9 +287,41 @@
 }
 
 .text-gradient-primary {
-  background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  position: relative;
+  display: inline-block;
+  color: #a5c8ff;
+  line-height: 1.1;
+}
+
+.text-gradient-primary::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #7c3aed, #06b6d4, #7c3aed);
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  background-repeat: no-repeat;
   -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   -webkit-text-fill-color: transparent;
+  pointer-events: none;
+  animation: shimmer 5s ease-in-out infinite;
+}
+
+.text-gradient-primary.animated {
+  animation: textBounce 900ms ease-out 0ms 2 forwards;
+}
+
+.text-gradient-primary.animated::after {
+  animation: shimmer 5s ease-in-out infinite, textBounce 900ms ease-out 0ms 2 forwards;
+}
+
+@-moz-document url-prefix() {
+  .text-gradient-primary::after {
+    animation: none !important;
+    background-position: 50% 50% !important;
+  }
 }
 
 .syn-hero-sub {
