@@ -1049,6 +1049,18 @@ body {
   align-items: start;
 }
 
+.dashboard-main-card {
+  display: flex;
+  gap: 18px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  min-height: calc(100vh - 120px);
+}
+
 .command-sidebar {
   position: sticky;
   top: 88px;
@@ -1061,6 +1073,22 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+
+.dashboard-body-scroll {
+  flex: 1;
+  max-height: calc(100vh - 152px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.dashboard-body-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dashboard-body-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
 }
 
 .sidebar-brand h3 {

@@ -233,7 +233,7 @@ const AdminDashboardPage: React.FC = () => {
       <DashboardNav user={user || null} showProfile={showProfile} onToggleProfile={() => setShowProfile((p) => !p)} />
 
       <div className="page-shell dashboard command-surface">
-        <div className="command-layout">
+        <div className="dashboard-main-card">
           <aside className="command-sidebar neon-rail">
             <div className="sidebar-brand">
               <p className="nx-kicker">Platform</p>
@@ -257,7 +257,8 @@ const AdminDashboardPage: React.FC = () => {
             <div className="sidebar-glow" />
           </aside>
 
-        <main className="command-main">
+          <div className="dashboard-body-scroll">
+            <main className="command-main">
           {activeSection === "overview" && (
             <header className="command-hero holo-hero" id="overview">
               <div>
@@ -758,7 +759,8 @@ const AdminDashboardPage: React.FC = () => {
       </div>
     </div>
   </div>
-);
+</div>
+  );
 };
 
 export default AdminDashboardPage;
