@@ -290,9 +290,11 @@
   background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
   background-clip: text;
   -webkit-background-clip: text;
+  -moz-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
   display: inline-block;
+  background-repeat: no-repeat;
 }
 
 .text-gradient-primary.animated {
@@ -304,6 +306,18 @@
   animation-delay: 0ms, 300ms, 0ms;
   animation-iteration-count: 1, infinite, infinite;
   animation-fill-mode: forwards, none, none;
+}
+
+@supports not (-webkit-background-clip: text) {
+  .text-gradient-primary,
+  .text-gradient-primary.animated {
+    background: none;
+    color: #a5c8ff;
+    -webkit-text-fill-color: initial;
+    animation-name: textBounce;
+    animation-duration: 800ms;
+    animation-iteration-count: 1;
+  }
 }
 
 .syn-hero-sub {
