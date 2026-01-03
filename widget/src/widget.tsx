@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowRight, CreditCardSlash, MapPinLine, ShieldCheck } from "@phosphor-icons/react";
+import { ArrowRight, CreditCard, MapPinLine, ShieldCheck } from "@phosphor-icons/react";
 
 export type WidgetConfig = {
   tenantId: string;
@@ -270,7 +270,7 @@ export const WidgetShell: React.FC<WidgetConfig> = ({
             </div>
             <span className="nx-neo-dot" />
             <div className="nx-neo-meta-item">
-              <CreditCardSlash size={18} weight="duotone" className="nx-neo-meta-icon" />
+              <CreditCard size={18} weight="duotone" className="nx-neo-meta-icon" />
               <span>No credit card required</span>
             </div>
           </div>
