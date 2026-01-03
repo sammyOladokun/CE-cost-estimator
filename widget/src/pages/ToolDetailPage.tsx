@@ -19,6 +19,7 @@ import {
   SlidersHorizontal,
   SquaresFour,
   Waves,
+  CaretLeft,
 } from "@phosphor-icons/react";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
@@ -179,6 +180,45 @@ const ToolDetailPage: React.FC = () => {
     <div className="tool-page">
       <div className="bg-glow glow-left" />
       <div className="bg-glow glow-right" />
+
+      <header className="tool-nav">
+        <div className="nav-left">
+          <button className="nav-brand" onClick={() => navigate("/")}>
+            <div className="brand-mark">
+              <HouseLine size={18} weight="duotone" />
+            </div>
+            <span>SaaS Market</span>
+          </button>
+          <nav className="nav-links">
+            <button onClick={() => navigate("/marketplace")}>Marketplace</button>
+            <button>Tools</button>
+            <button>Integrations</button>
+            <button>Pricing</button>
+          </nav>
+        </div>
+        <div className="nav-right">
+          <div className="nav-search">
+            <MagnifyingGlass size={16} weight="duotone" />
+            <input placeholder="Search tools..." />
+          </div>
+          {user ? (
+            <div className="nav-avatar" title={user.email}>
+              {user.full_name?.[0] || user.email?.[0]}
+            </div>
+          ) : (
+            <button className="btn white small" onClick={openAuth}>
+              Log In
+            </button>
+          )}
+        </div>
+      </header>
+
+      <div className="back-row">
+        <button className="back-link" onClick={() => navigate("/marketplace")}>
+          <CaretLeft size={14} weight="duotone" />
+          <span>Back to marketplace</span>
+        </button>
+      </div>
 
       <section className="hero-wrap">
         <div className="hero">

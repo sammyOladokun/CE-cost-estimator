@@ -2312,6 +2312,122 @@ body {
   gap: 28px;
 }
 
+.tool-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  backdrop-filter: blur(16px);
+  background: rgba(10, 12, 18, 0.8);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #7c3bed, #06b6d4);
+  box-shadow: 0 0 12px rgba(124, 59, 237, 0.4);
+}
+
+.nav-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-links button {
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nav-links button:hover {
+  color: #ffffff;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.nav-search input {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  outline: none;
+  width: 160px;
+}
+
+.nav-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #7c3bed, #06b6d4);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.btn.small {
+  padding: 10px 14px;
+  font-weight: 700;
+}
+
+.back-row {
+  display: flex;
+  justify-content: flex-start;
+  z-index: 1;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .bg-glow {
   position: absolute;
   filter: blur(160px);
