@@ -73,8 +73,8 @@ services:
   frontend:
     image: node:18-alpine
     working_dir: /app
-    # Install dependencies inside the container and run Vite
-    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0 --port 5173"
+    # Install deps, build the embeddable widget bundle once, then start Vite dev server
+    command: sh -c "npm ci && npm run build:widget && npm run dev -- --host 0.0.0.0 --port 5173"
     volumes:
       - ./widget:/app
     ports:
