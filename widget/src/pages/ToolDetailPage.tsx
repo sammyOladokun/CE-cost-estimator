@@ -20,6 +20,7 @@ import {
   SquaresFour,
   Waves,
   CaretLeft,
+  TrendUp,
 } from "@phosphor-icons/react";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
