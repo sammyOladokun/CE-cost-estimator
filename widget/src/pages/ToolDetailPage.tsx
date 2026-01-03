@@ -58,6 +58,12 @@ const ToolDetailPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [onboardError, setOnboardError] = useState<string | null>(null);
 
+  const ensureWidget = async () => {
+    if (typeof window !== "undefined" && !window.nexWidget) {
+      await import("../index"); // dynamically load the widget bundle in dev
+    }
+  };
+
   const features: Feature[] = useMemo(
     () =>
       tool?.bento_features?.length
@@ -91,12 +97,13 @@ const ToolDetailPage: React.FC = () => {
     if (slug) load();
   }, [slug]);
 
-  const launchSandbox = () => {
+  const launchSandbox = async () => {
     if (!tool) return;
     if (!user) {
       openAuth();
       return;
     }
+    await ensureWidget();
     const tenantPrompt = user.tenant_id || DEMO_TENANT_ID || prompt("Enter tenant id for sandbox widget:") || "";
     window.nexWidget?.({
       tenantId: tenantPrompt,
