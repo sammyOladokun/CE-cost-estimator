@@ -27,16 +27,7 @@ import "../styles.css";
 import { useAuth } from "../context/AuthContext";
 
 type Feature = { title?: string; copy?: string; icon?: string };
-
-type Tool = {
-  id: string;
-  slug: string;
-  name: string;
-  summary: string;
-  media_url?: string;
-  price_monthly?: number;
-  bento_features?: Feature[];
-};
+type Tool = { id: string; slug: string; name: string; summary: string; media_url?: string; price_monthly?: number; bento_features?: Feature[] };
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
 const DEMO_TENANT_ID = import.meta.env.VITE_DEMO_TENANT_ID || "";
@@ -47,12 +38,13 @@ declare global {
   }
 }
 
-const avatarPalette = ["bg-slate-600", "bg-slate-500", "bg-slate-700"];
-const glassStyle = {
-  background: "rgba(255,255,255,0.02)",
-  border: "1px solid rgba(255,255,255,0.08)",
-  backdropFilter: "blur(24px) saturate(1.8)",
-} as const;
+const avatarUrls = [
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuDNmfMvwlc2HsrmqO8dc4dTBCcnU-i_VnPWjs8V-gRk7HLNHRGvFaJsFaG69YFW2p41-5ItWsPLQxNgAyp2RtDaGatL8J8bjxO0i3qIA5eVnj87CvOuRUjhaNpJyFYrbv2qxKiDGyYJ4E-gmxEb2JFS2bfWOVtSRaGRbvmjZ21SeEYZf4VSRoiQhfX0v9v1yYuS8DA8ijjatoMQAEVufDvnE4raSeq39b_G7kq7-63HNJIyY6zeU22rmzu1UeNOQK3GkvJATuVxaVWw",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuC4oBxte5y2o7gUhjsAvtvj2wSnzhROIibVVcAtqJlsklUVsK0t24zVTN1jcnYxEoJY6V-1CwBraCfhFxc7lUNsiuML35g0l5dckldRjNeV7GjHpizp1V1ru_XDADW6-Qz9lgmVFwqQesuyQb6cbGm0ZNrVvn06D_Z85JEO4EcuShdPIbsr4c3BxpD89OWzVI_6Ej7PJ9X_SX14Azi0mkdre9yfAQ4TSw69UrAsgvrT7IF7pnQcPXFbn8caVTOCHcFAHqyVthE3110W",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuC5bJVmwgHI0c5aFRMoZhLpEJhJP4PS-nqVFBv2ZZ5gCO4rj7eJp5V0W7Zh7ntWuNIrK89ssJOBOEXnJ6N1NgaxGYYJW8JBlR8e-mIZKYU-eoPJ9NgWc8XgPiENFSPRDbCNSEkkU7OSgkq7Nj1ktiNXE_QEIoMJCzq7u3GWWfxTftew0iTG_SYmPMP4CBeXwOXU5dTQuQ7Z2Ype4gl3GmgFYzC30nsqsz4HD6j-Rg85_rYFkfT92nB_WJTWrUQ_IIuIX1Rc2E5Wbe9Z",
+];
+
+const glassStyle = { background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.08)", backdropFilter: "blur(24px) saturate(1.8)" } as const;
 
 const ToolDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -61,7 +53,6 @@ const ToolDetailPage: React.FC = () => {
   const [tool, setTool] = useState<Tool | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [showOnboard, setShowOnboard] = useState(false);
   const [existing, setExisting] = useState(false);
   const [tenantName, setTenantName] = useState("");
@@ -71,12 +62,6 @@ const ToolDetailPage: React.FC = () => {
   const [tenantId, setTenantId] = useState(DEMO_TENANT_ID);
   const [saving, setSaving] = useState(false);
   const [onboardError, setOnboardError] = useState<string | null>(null);
-
-  const ensureWidget = async () => {
-    if (typeof window !== "undefined" && !window.nexWidget) {
-      await import("../index");
-    }
-  };
 
   const features: Feature[] = useMemo(
     () =>
@@ -109,6 +94,12 @@ const ToolDetailPage: React.FC = () => {
     if (slug) load();
   }, [slug]);
 
+  const ensureWidget = async () => {
+    if (typeof window !== "undefined" && !window.nexWidget) {
+      await import("../index");
+    }
+  };
+
   const launchSandbox = async () => {
     if (!tool) return;
     if (!user) {
@@ -117,12 +108,7 @@ const ToolDetailPage: React.FC = () => {
     }
     await ensureWidget();
     const tenantPrompt = user.tenant_id || DEMO_TENANT_ID || prompt("Enter tenant id for sandbox widget:") || "";
-    window.nexWidget?.({
-      tenantId: tenantPrompt,
-      apiBase: API_BASE,
-      toolSlug: tool.slug,
-      sandbox: true,
-    }) ?? alert("Widget bundle not loaded");
+    window.nexWidget?.({ tenantId: tenantPrompt, apiBase: API_BASE, toolSlug: tool.slug, sandbox: true }) ?? alert("Widget bundle not loaded");
   };
 
   const startOnboarding = async () => {
@@ -134,37 +120,22 @@ const ToolDetailPage: React.FC = () => {
     setSaving(true);
     setOnboardError(null);
     try {
-      const payload: Record<string, any> = {
-        tool: tool.slug,
-        email: user?.email || email,
-      };
-      if (user && user.tenant_id) {
-        payload.existing_tenant_id = user.tenant_id;
-      } else if (existing) {
-        payload.existing_tenant_id = tenantId;
-      } else {
+      const payload: Record<string, any> = { tool: tool.slug, email: user?.email || email };
+      if (user && user.tenant_id) payload.existing_tenant_id = user.tenant_id;
+      else if (existing) payload.existing_tenant_id = tenantId;
+      else {
         payload.tenant_name = tenantName;
         payload.full_name = fullName || user?.full_name;
         payload.password = password;
       }
       const headers: HeadersInit = { "Content-Type": "application/json" };
       if (user?.token) headers["Authorization"] = `Token ${user.token}`;
-      const resp = await fetch(`${API_BASE}/api/onboarding/start`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      });
-      if (!resp.ok) {
-        const err = await resp.json();
-        throw new Error(err.detail || "Unable to start onboarding");
-      }
+      const resp = await fetch(`${API_BASE}/api/onboarding/start`, { method: "POST", headers, body: JSON.stringify(payload) });
+      if (!resp.ok) throw new Error((await resp.json()).detail || "Unable to start onboarding");
       const data = await resp.json();
       const pay = data.payment_url as string;
-      if (pay) {
-        window.location.href = pay;
-      } else {
-        alert("Onboarding started. License created.");
-      }
+      if (pay) window.location.href = pay;
+      else alert("Onboarding started. License created.");
     } catch (err: any) {
       setOnboardError(err.message || "Unable to start onboarding");
     } finally {
@@ -183,6 +154,19 @@ const ToolDetailPage: React.FC = () => {
   if (loading) return <p className="page-shell">Loading...</p>;
   if (error || !tool) return <p className="page-shell">Error: {error || "Not found"}</p>;
 
+  const stats = [
+    { label: "Lead Capture Increase", value: "30%", tag: "+15% vs industry avg", icon: <TrendUp size={24} weight="duotone" className="text-green-400" />, tagClass: "text-green-400 bg-green-400/10" },
+    { label: "Quote Generation Speed", value: "Instant", tag: "Real-time calculation", icon: <Lightning size={24} weight="duotone" className="text-cyan-300" />, tagClass: "text-slate-400 bg-white/5" },
+    { label: "Contractor Trust", value: "500+", tag: "Active Installations", icon: <ShieldCheck size={24} weight="duotone" className="text-purple-400" />, tagClass: "text-purple-300 bg-purple-500/10" },
+  ];
+
+  const workflow = [
+    { title: "Visitor Input", copy: "Enters address & info", icon: HandPointing, ring: "border-white/10 bg-white/5", glow: "shadow-[0_0_30px_rgba(255,255,255,0.15)]" },
+    { title: "Smart Calculation", copy: "AI measures & prices", icon: Brain, ring: "border-purple-400/40 bg-purple-500/10", glow: "shadow-[0_0_30px_rgba(124,58,237,0.35)]" },
+    { title: "CRM Sync", copy: "Data sent to your tools", icon: GitBranch, ring: "border-cyan-300/40 bg-cyan-400/10", glow: "shadow-[0_0_30px_rgba(6,182,212,0.35)]" },
+    { title: "Lead Closed", copy: "Sales team follows up", icon: CurrencyCircleDollar, ring: "border-green-400/40 bg-green-400/10", glow: "shadow-[0_0_30px_rgba(74,222,128,0.35)]" },
+  ];
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#0B0B0F] text-white">
       <div className="pointer-events-none fixed inset-0 -z-10">
@@ -194,10 +178,7 @@ const ToolDetailPage: React.FC = () => {
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0B0B0F]/70 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
           <div className="flex items-center gap-8">
-            <button
-              onClick={() => navigate("/")}
-              className="flex items-center gap-3 rounded-full px-2 py-1 text-white transition hover:opacity-90"
-            >
+            <button onClick={() => navigate("/")} className="flex items-center gap-3 rounded-full px-2 py-1 text-white transition hover:opacity-90">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-cyan-400 text-white shadow-[0_0_18px_rgba(124,58,237,0.45)]">
                 <HouseLine size={18} weight="duotone" />
               </div>
@@ -214,28 +195,18 @@ const ToolDetailPage: React.FC = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="relative hidden sm:block">
-              <MagnifyingGlass
-                size={18}
-                weight="duotone"
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-              />
+              <MagnifyingGlass size={18} weight="duotone" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
               <input
                 placeholder="search tools.."
                 className="h-10 w-64 rounded-full border border-white/10 bg-white/5 px-4 pl-10 text-sm text-white placeholder:text-slate-500 backdrop-blur-md transition focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/40"
               />
             </div>
             {user ? (
-              <div
-                title={user.email}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sm font-semibold uppercase"
-              >
+              <div title={user.email} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-sm font-semibold uppercase">
                 {user.full_name?.[0] || user.email?.[0]}
               </div>
             ) : (
-              <button
-                onClick={openAuth}
-                className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-slate-200"
-              >
+              <button onClick={openAuth} className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black transition hover:bg-slate-200">
                 Log In
               </button>
             )}
@@ -290,11 +261,11 @@ const ToolDetailPage: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-3 text-sm text-slate-400">
                   <div className="flex -space-x-2">
-                    {avatarPalette.map((bg, idx) => (
+                    {avatarUrls.map((src, idx) => (
                       <div
-                        key={bg}
-                        className={`h-10 w-10 rounded-full border-2 border-[#0B0B0F] ${bg}`}
-                        style={{ zIndex: 10 - idx }}
+                        key={src}
+                        className="h-10 w-10 rounded-full border-2 border-[#0B0B0F] bg-slate-700"
+                        style={{ zIndex: 10 - idx, backgroundImage: `url(${src})`, backgroundSize: "cover", backgroundPosition: "center" }}
                       />
                     ))}
                   </div>
@@ -339,9 +310,7 @@ const ToolDetailPage: React.FC = () => {
                       <div className="space-y-8 px-6 py-10">
                         <div className="text-center">
                           <h3 className="text-2xl font-bold">Quality Roofing Solutions</h3>
-                          <p className="mt-2 text-sm text-slate-400">
-                            Get a free, instant estimate for your property using our advanced satellite tool.
-                          </p>
+                          <p className="mt-2 text-sm text-slate-400">Get a free, instant estimate for your property using our advanced satellite tool.</p>
                         </div>
 
                         <div className="mx-auto w-full max-w-sm overflow-hidden rounded-xl border border-orange-500/30 bg-[#15151C] shadow-2xl">
@@ -361,22 +330,14 @@ const ToolDetailPage: React.FC = () => {
                                   placeholder="123 Main St..."
                                   className="w-full rounded-md border border-white/10 bg-[#0E0E12] py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
                                 />
-                                <MapPinLine
-                                  size={16}
-                                  weight="duotone"
-                                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
-                                />
+                                <MapPinLine size={16} weight="duotone" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                               </div>
                             </div>
                             <div className="space-y-2">
                               <label className="text-[11px] font-bold uppercase tracking-wide text-slate-400">Project Type</label>
                               <div className="flex rounded-md border border-white/10 bg-[#0E0E12] p-1">
-                                <button className="flex-1 rounded bg-orange-500 px-3 py-2 text-xs font-bold text-white shadow-md transition">
-                                  Full Replacement
-                                </button>
-                                <button className="flex-1 rounded px-3 py-2 text-xs font-semibold text-slate-400 transition hover:text-white">
-                                  Partial Repair
-                                </button>
+                                <button className="flex-1 rounded bg-orange-500 px-3 py-2 text-xs font-bold text-white shadow-md transition">Full Replacement</button>
+                                <button className="flex-1 rounded px-3 py-2 text-xs font-semibold text-slate-400 transition hover:text-white">Partial Repair</button>
                               </div>
                             </div>
                             <button className="flex w-full items-center justify-center gap-2 rounded-md bg-orange-500 px-4 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-orange-600">
@@ -393,10 +354,7 @@ const ToolDetailPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div
-                    className="absolute -right-6 top-6 flex items-center gap-3 rounded-xl px-3 py-2 text-sm shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
-                    style={{ ...glassStyle, border: "1px solid rgba(124,58,237,0.3)" }}
-                  >
+                  <div className="absolute -right-6 top-6 flex items-center gap-3 rounded-xl px-3 py-2 text-sm shadow-[0_12px_40px_rgba(0,0,0,0.6)]" style={{ ...glassStyle, border: "1px solid rgba(124,58,237,0.3)" }}>
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/20 text-purple-300">
                       <ChartLineUp size={22} weight="duotone" />
                     </div>
@@ -414,29 +372,7 @@ const ToolDetailPage: React.FC = () => {
         <section className="border-y border-white/10 bg-black/20 py-10">
           <div className="mx-auto max-w-7xl px-4 lg:px-8">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {[
-                {
-                  label: "Lead Capture Increase",
-                  value: "30%",
-                  tag: "+15% vs industry avg",
-                  icon: <TrendUp size={24} weight="duotone" className="text-green-400" />,
-                  tagClass: "text-green-400 bg-green-400/10",
-                },
-                {
-                  label: "Quote Generation Speed",
-                  value: "Instant",
-                  tag: "Real-time calculation",
-                  icon: <Lightning size={24} weight="duotone" className="text-cyan-300" />,
-                  tagClass: "text-slate-400 bg-white/5",
-                },
-                {
-                  label: "Contractor Trust",
-                  value: "500+",
-                  tag: "Active Installations",
-                  icon: <ShieldCheck size={24} weight="duotone" className="text-purple-400" />,
-                  tagClass: "text-purple-300 bg-purple-500/10",
-                },
-              ].map((stat) => (
+              {stats.map((stat) => (
                 <div key={stat.label} className="rounded-2xl px-6 py-5" style={glassStyle}>
                   <div className="flex items-center justify-between text-sm text-slate-400">
                     <p>{stat.label}</p>
@@ -459,17 +395,12 @@ const ToolDetailPage: React.FC = () => {
                 Our tool combines precision technology with seamless UX to boost your roofing business without manual legwork.
               </p>
             </div>
-
             <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {features.map((feat, idx) => {
                 const icons = [Planet, SquaresFour, GitBranch, DeviceMobile, ChartLine, SlidersHorizontal];
                 const Icon = icons[idx % icons.length];
                 return (
-                  <div
-                    key={`${feat.title}-${idx}`}
-                    className="rounded-2xl px-6 py-6 transition duration-300 hover:border-purple-400/40"
-                    style={glassStyle}
-                  >
+                  <div key={`${feat.title}-${idx}`} className="rounded-2xl px-6 py-6 transition duration-300 hover:border-purple-400/40" style={glassStyle}>
                     <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-purple-300">
                       <Icon size={26} weight="duotone" />
                     </div>
@@ -490,25 +421,11 @@ const ToolDetailPage: React.FC = () => {
             </div>
             <div className="relative flex flex-col items-center gap-8 lg:flex-row lg:justify-between">
               <div className="pointer-events-none absolute left-0 top-1/2 hidden h-px w-full -translate-y-1/2 bg-gradient-to-r from-transparent via-white/20 to-transparent lg:block" />
-              {[
-                { title: "Visitor Input", copy: "Enters address & info", icon: HandPointing },
-                { title: "Smart Calculation", copy: "AI measures & prices", icon: Brain },
-                { title: "CRM Sync", copy: "Data sent to your tools", icon: GitBranch },
-                { title: "Lead Closed", copy: "Sales team follows up", icon: CurrencyCircleDollar },
-              ].map((step, idx) => {
+              {workflow.map((step) => {
                 const Icon = step.icon;
-                const glow = ["shadow-[0_0_30px_rgba(255,255,255,0.15)]", "shadow-[0_0_30px_rgba(124,58,237,0.35)]", "shadow-[0_0_30px_rgba(6,182,212,0.35)]", "shadow-[0_0_30px_rgba(74,222,128,0.35)]"][idx] || "";
-                const ring =
-                  idx === 0
-                    ? "border-white/10 bg-white/5"
-                    : idx === 1
-                      ? "border-purple-400/40 bg-purple-500/10"
-                      : idx === 2
-                        ? "border-cyan-300/40 bg-cyan-400/10"
-                        : "border-green-400/40 bg-green-400/10";
                 return (
                   <div key={step.title} className="relative z-10 flex flex-col items-center gap-3">
-                    <div className={`flex h-20 w-20 items-center justify-center rounded-full border ${ring} ${glow}`}>
+                    <div className={`flex h-20 w-20 items-center justify-center rounded-full border ${step.ring} ${step.glow}`}>
                       <Icon size={30} weight="fill" />
                     </div>
                     <div className="space-y-1 text-center">
@@ -527,14 +444,9 @@ const ToolDetailPage: React.FC = () => {
           <div className="pointer-events-none absolute left-1/2 top-1/2 h-[820px] w-[820px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5" />
           <div className="relative mx-auto max-w-4xl px-4 text-center lg:px-8">
             <h3 className="text-4xl font-black text-white sm:text-5xl">Ready to transform your roofing website?</h3>
-            <p className="mt-4 text-lg text-slate-400">
-              Join hundreds of top-tier contractors using the Smart Estimator to generate leads while they sleep.
-            </p>
+            <p className="mt-4 text-lg text-slate-400">Join hundreds of top-tier contractors using the Smart Estimator to generate leads while they sleep.</p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <button
-                onClick={() => setShowOnboard(true)}
-                className="w-full rounded-lg bg-white px-8 py-3 text-center text-lg font-bold text-black transition hover:bg-slate-200 sm:w-auto"
-              >
+              <button onClick={() => setShowOnboard(true)} className="w-full rounded-lg bg-white px-8 py-3 text-center text-lg font-bold text-black transition hover:bg-slate-200 sm:w-auto">
                 Start Free Trial
               </button>
               <button
