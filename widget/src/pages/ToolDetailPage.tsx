@@ -1,5 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  ArrowRight,
+  Brain,
+  Calculator,
+  ChartLine,
+  CheckCircle,
+  Code,
+  CurrencyCircleDollar,
+  DeviceMobile,
+  GitBranch,
+  HandPointing,
+  HouseLine,
+  Lightning,
+  MagnifyingGlass,
+  Planet,
+  ShieldCheck,
+  SlidersHorizontal,
+  SquaresFour,
+  Waves,
+  CaretLeft,
+  TrendUp,
+} from "@phosphor-icons/react";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
 
@@ -42,6 +64,27 @@ const ToolDetailPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [onboardError, setOnboardError] = useState<string | null>(null);
 
+  const ensureWidget = async () => {
+    if (typeof window !== "undefined" && !window.nexWidget) {
+      await import("../index");
+    }
+  };
+
+  const features: Feature[] = useMemo(
+    () =>
+      tool?.bento_features?.length
+        ? tool.bento_features
+        : [
+            { title: "AI Roof Detection", copy: "Auto-calculate surface area from satellite imagery with high accuracy." },
+            { title: "Material Customization", copy: "Price asphalt, metal, or tile instantly with live updates." },
+            { title: "CRM Integration", copy: "Push captured leads to HubSpot, Salesforce, or Jobber automatically." },
+            { title: "Responsive Widget", copy: "Works perfectly on mobile, tablet, and desktop." },
+            { title: "Analytics Dashboard", copy: "Track estimates, conversion, and popular materials." },
+            { title: "Custom Branding", copy: "Match the calculator to your site for a white-label experience." },
+          ],
+    [tool?.bento_features],
+  );
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -60,12 +103,13 @@ const ToolDetailPage: React.FC = () => {
     if (slug) load();
   }, [slug]);
 
-  const launchSandbox = () => {
+  const launchSandbox = async () => {
     if (!tool) return;
     if (!user) {
       openAuth();
       return;
     }
+    await ensureWidget();
     const tenantPrompt = user.tenant_id || DEMO_TENANT_ID || prompt("Enter tenant id for sandbox widget:") || "";
     window.nexWidget?.({
       tenantId: tenantPrompt,
@@ -122,45 +166,251 @@ const ToolDetailPage: React.FC = () => {
     }
   };
 
+  const handleEmbed = async () => {
+    if (!user) {
+      openAuth();
+      return;
+    }
+    navigate(`/tenant/tools/${slug}`);
+  };
+
   if (loading) return <p className="page-shell">Loading…</p>;
   if (error || !tool) return <p className="page-shell">Error: {error || "Not found"}</p>;
 
   return (
-    <div className="page-shell">
-      <button className="backlink" onClick={() => navigate(-1)}>
-        ← Back to marketplace
-      </button>
-      <header className="tool-hero">
-        <div>
-          <p className="nx-kicker">Tool</p>
-          <h1>{tool.name}</h1>
-          <p className="nx-subtle">{tool.summary}</p>
-          <div className="cta-row">
-            <button className="nx-cta" onClick={launchSandbox}>
-              Try it (sandbox)
-            </button>
-            <button className="nx-ghost" onClick={() => setShowOnboard(true)}>
-              Get Started — ${tool.price_monthly ?? 99}/mo
-            </button>
-          </div>
+    <div className="tool-page">
+      <div className="bg-glow glow-left" />
+      <div className="bg-glow glow-right" />
+
+      <header className="tool-nav">
+        <div className="nav-left">
+          <button className="nav-brand" onClick={() => navigate("/")}>
+            <div className="brand-mark">
+              <HouseLine size={18} weight="duotone" />
+            </div>
+            <span>SaaS Market</span>
+          </button>
+          <nav className="nav-links">
+            <button onClick={() => navigate("/marketplace")}>Marketplace</button>
+            <button>Tools</button>
+            <button>Integrations</button>
+            <button>Pricing</button>
+          </nav>
         </div>
-        <div className="hero-media">
-          {tool.media_url ? (
-            <video autoPlay loop muted playsInline src={tool.media_url} />
+        <div className="nav-right">
+          <div className="nav-search">
+            <MagnifyingGlass size={16} weight="duotone" />
+            <input placeholder="Search tools..." />
+          </div>
+          {user ? (
+            <div className="nav-avatar" title={user.email}>
+              {user.full_name?.[0] || user.email?.[0]}
+            </div>
           ) : (
-            <div className="store-icon">🛰</div>
+            <button className="btn white small" onClick={openAuth}>
+              Log In
+            </button>
           )}
         </div>
       </header>
 
-      <section className="bento-grid">
-        {(tool.bento_features || []).map((feat, idx) => (
-          <div key={idx} className="bento-card">
-            <p className="nx-kicker">{feat.icon || "◆"}</p>
-            <h4>{feat.title}</h4>
-            <p className="nx-subtle">{feat.copy}</p>
+      <div className="back-row">
+        <button className="back-link" onClick={() => navigate("/marketplace")}>
+          <CaretLeft size={14} weight="duotone" />
+          <span>Back to marketplace</span>
+        </button>
+      </div>
+
+      <section className="hero-wrap">
+        <div className="hero">
+          <div className="hero-content">
+            <div className="pill">
+              <ShieldCheck size={16} weight="duotone" />
+              <span>Top Rated Tool</span>
+            </div>
+            <h1>
+              Capture Leads 24/7 with the <span className="accent-text">Smart Estimator</span>
+            </h1>
+            <p className="hero-sub">
+              {tool.summary ||
+                "Embed the industry's most accurate estimator on your site. Turn traffic into qualified appointments instantly with AI-powered estimates and seamless CRM integration."}
+            </p>
+            <div className="hero-actions">
+              <button className="btn purple" onClick={launchSandbox}>
+                <span>Request Demo</span>
+                <ArrowRight size={18} weight="duotone" />
+              </button>
+              <button className="btn glass" onClick={handleEmbed}>
+                <Code size={18} weight="duotone" />
+                <span>Get Embed Code</span>
+              </button>
+            </div>
+            <div className="hero-meta">
+              <div className="avatar-row">
+                <div className="avatar a1" />
+                <div className="avatar a2" />
+                <div className="avatar a3" />
+              </div>
+              <p>Used by 500+ Contractors</p>
+            </div>
           </div>
-        ))}
+
+          <div className="hero-card">
+            <div className="mock-header">
+              <div className="mock-title">
+                <Calculator size={22} weight="duotone" />
+                <div>
+                  <p className="mock-name">{tool.name || "Roofing Estimator"}</p>
+                  <p className="mock-sub">Powered by Smart AI</p>
+                </div>
+              </div>
+              <div className="mock-lights">
+                <span className="light red" />
+                <span className="light yellow" />
+                <span className="light green" />
+              </div>
+            </div>
+            <div className="mock-body">
+              <div>
+                <p className="label">Property Address</p>
+                <div className="chip">
+                  <Planet size={16} weight="duotone" />
+                  <span>124 Maple Ave, Springfield</span>
+                </div>
+              </div>
+              <div className="mock-map">
+                <div className="chip map-chip">
+                  <CheckCircle size={14} weight="duotone" />
+                  <span>Roof Detected: 2,400 sq ft</span>
+                </div>
+              </div>
+              <div>
+                <p className="label">Select Material</p>
+                <div className="material-grid">
+                  <button className="material active">
+                    <SquaresFour size={18} weight="duotone" />
+                    <span>Shingle</span>
+                  </button>
+                  <button className="material">
+                    <Waves size={18} weight="duotone" />
+                    <span>Metal</span>
+                  </button>
+                  <button className="material">
+                    <SlidersHorizontal size={18} weight="duotone" />
+                    <span>Tile</span>
+                  </button>
+                </div>
+              </div>
+              <div className="mock-footer">
+                <div>
+                  <p className="label">Estimated Range</p>
+                  <p className="mock-range">$12,500 - $14,200</p>
+                </div>
+                <button className="btn white">Send Quote</button>
+              </div>
+            </div>
+            <div className="floating-card">
+              <HandPointing size={18} weight="duotone" className="float-icon" />
+              <div>
+                <p className="float-sub">New Lead Captured</p>
+                <p className="float-title">Just now</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="stats">
+        <div className="stat glass">
+          <div className="stat-head">
+            <p>Lead Capture Increase</p>
+            <TrendUp size={18} weight="duotone" className="text-green" />
+          </div>
+          <p className="stat-value">30%</p>
+          <p className="stat-tag positive">+15% vs industry avg</p>
+        </div>
+        <div className="stat glass">
+          <div className="stat-head">
+            <p>Quote Generation Speed</p>
+            <Lightning size={18} weight="duotone" className="text-cyan" />
+          </div>
+          <p className="stat-value">Instant</p>
+          <p className="stat-sub">Real-time calculation</p>
+        </div>
+        <div className="stat glass">
+          <div className="stat-head">
+            <p>Contractor Trust</p>
+            <ShieldCheck size={18} weight="duotone" className="text-purple" />
+          </div>
+          <p className="stat-value">500+</p>
+          <p className="stat-tag primary">Active Installations</p>
+        </div>
+      </section>
+
+      <section className="feature-section">
+        <div className="feature-head">
+          <p className="nx-kicker">Powerful Features</p>
+          <h3>Why choose Smart Estimator?</h3>
+          <p className="nx-subtle">
+            Our tool combines precision technology with seamless UX to boost your roofing business without manual legwork.
+          </p>
+        </div>
+        <div className="feature-grid">
+          {features.map((feat, idx) => {
+            const icons = [Planet, SquaresFour, GitBranch, DeviceMobile, ChartLine, SlidersHorizontal];
+            const Icon = icons[idx % icons.length];
+            return (
+              <div key={idx} className="feature glass">
+                <div className="feature-icon">
+                  <Icon size={22} weight="duotone" />
+                </div>
+                <h4>{feat.title}</h4>
+                <p>{feat.copy}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="workflow-section">
+        <div className="workflow-head">
+          <h3>Seamless Workflow</h3>
+          <p>From visitor to closed deal, automated at every step.</p>
+        </div>
+        <div className="workflow-steps">
+          {[
+            { title: "Visitor Input", copy: "Enters address & info", icon: HandPointing },
+            { title: "Smart Calculation", copy: "AI measures & prices", icon: Brain },
+            { title: "CRM Sync", copy: "Data sent to your tools", icon: GitBranch },
+            { title: "Lead Closed", copy: "Sales team follows up", icon: CurrencyCircleDollar },
+          ].map((step, idx) => {
+            const Icon = step.icon;
+            return (
+              <div key={idx} className="workflow-card">
+                <div className="workflow-icon">
+                  <Icon size={24} weight="duotone" />
+                </div>
+                <h5>{step.title}</h5>
+                <p>{step.copy}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="cta-section">
+        <div className="cta-body">
+          <h3>Ready to transform your roofing website?</h3>
+          <p>Join hundreds of top-tier contractors using the Smart Estimator to generate leads while they sleep.</p>
+          <div className="hero-actions">
+            <button className="btn white" onClick={() => setShowOnboard(true)}>
+              Start Free Trial
+            </button>
+            <button className="btn glass" onClick={handleEmbed}>
+              Contact Sales
+            </button>
+          </div>
+        </div>
       </section>
 
       {showOnboard && (
@@ -198,7 +448,7 @@ const ToolDetailPage: React.FC = () => {
                   Cancel
                 </button>
                 <button className="nx-cta" type="button" onClick={startOnboarding} disabled={saving}>
-                  {saving ? "Working…" : "Continue to payment"}
+                  {saving ? "Working..." : "Continue to payment"}
                 </button>
               </div>
               {onboardError && <p className="error">{onboardError}</p>}
