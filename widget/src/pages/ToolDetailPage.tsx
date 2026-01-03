@@ -1,5 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  ArrowRight,
+  Brain,
+  ChartLine,
+  CheckCircle,
+  Code,
+  DeviceMobileCamera,
+  GitBranch,
+  HandPointing,
+  Lightning,
+  Planet,
+  ShieldCheck,
+  SlidersHorizontal,
+  SquaresFour,
+  TrendUp,
+} from "@phosphor-icons/react";
 import "../styles.css";
 import { useAuth } from "../context/AuthContext";
 
@@ -41,6 +57,21 @@ const ToolDetailPage: React.FC = () => {
   const [tenantId, setTenantId] = useState(DEMO_TENANT_ID);
   const [saving, setSaving] = useState(false);
   const [onboardError, setOnboardError] = useState<string | null>(null);
+
+  const features: Feature[] = useMemo(
+    () =>
+      tool?.bento_features?.length
+        ? tool.bento_features
+        : [
+            { title: "AI roof detection", copy: "Auto-calculate surface area from satellite imagery with high accuracy." },
+            { title: "Material customization", copy: "Price asphalt, metal, or tile instantly with live updates." },
+            { title: "CRM integration", copy: "Push leads to HubSpot, Salesforce, or Jobber automatically." },
+            { title: "Responsive widget", copy: "Beautiful on desktop and mobile with your brand colors." },
+            { title: "Analytics", copy: "Track estimates, conversion, and top materials in your dashboard." },
+            { title: "Custom branding", copy: "White-label the calculator to match your site." },
+          ],
+    [tool?.bento_features],
+  );
 
   useEffect(() => {
     const load = async () => {
@@ -122,45 +153,210 @@ const ToolDetailPage: React.FC = () => {
     }
   };
 
+  const handleEmbed = () => {
+    if (!user) {
+      openAuth();
+      return;
+    }
+    navigate(`/tenant/tools/${slug}`);
+  };
+
   if (loading) return <p className="page-shell">Loading…</p>;
   if (error || !tool) return <p className="page-shell">Error: {error || "Not found"}</p>;
 
   return (
-    <div className="page-shell">
-      <button className="backlink" onClick={() => navigate(-1)}>
-        ← Back to marketplace
-      </button>
-      <header className="tool-hero">
-        <div>
-          <p className="nx-kicker">Tool</p>
-          <h1>{tool.name}</h1>
-          <p className="nx-subtle">{tool.summary}</p>
-          <div className="cta-row">
-            <button className="nx-cta" onClick={launchSandbox}>
-              Try it (sandbox)
-            </button>
-            <button className="nx-ghost" onClick={() => setShowOnboard(true)}>
-              Get Started — ${tool.price_monthly ?? 99}/mo
-            </button>
+    <div className="tool-neo-shell">
+      <section className="tool-hero-neo">
+        <div className="glow glow-a" />
+        <div className="glow glow-b" />
+        <div className="hero-grid">
+          <div className="hero-copy">
+            <div className="badge">
+              <ShieldCheck size={16} weight="duotone" />
+              <span>Top Rated Tool</span>
+            </div>
+            <h1>
+              Capture leads 24/7 with the <span className="text-gradient">{tool.name || "Smart Estimator"}</span>
+            </h1>
+            <p className="lede">{tool.summary}</p>
+            <div className="hero-actions">
+              <button className="btn-primary" onClick={launchSandbox}>
+                <span>Request Demo</span>
+                <ArrowRight size={18} weight="duotone" />
+              </button>
+              <button className="btn-ghost" onClick={handleEmbed}>
+                <Code size={18} weight="duotone" />
+                <span>Get Embed Code</span>
+              </button>
+            </div>
+            <div className="hero-meta">
+              <div className="avatars">
+                <div className="avatar avatar-1" />
+                <div className="avatar avatar-2" />
+                <div className="avatar avatar-3" />
+              </div>
+              <p>Used by 500+ Contractors</p>
+            </div>
           </div>
-        </div>
-        <div className="hero-media">
-          {tool.media_url ? (
-            <video autoPlay loop muted playsInline src={tool.media_url} />
-          ) : (
-            <div className="store-icon">🛰</div>
-          )}
-        </div>
-      </header>
 
-      <section className="bento-grid">
-        {(tool.bento_features || []).map((feat, idx) => (
-          <div key={idx} className="bento-card">
-            <p className="nx-kicker">{feat.icon || "◆"}</p>
-            <h4>{feat.title}</h4>
-            <p className="nx-subtle">{feat.copy}</p>
+          <div className="hero-mock">
+            <div className="mock-card">
+              <div className="mock-head">
+                <div className="mock-title">
+                  <SquaresFour size={24} weight="duotone" />
+                  <div>
+                    <p className="mock-name">{tool.name || "Roofing Estimator"}</p>
+                    <p className="mock-sub">Powered by Smart AI</p>
+                  </div>
+                </div>
+                <div className="mock-dots">
+                  <span className="dot dot-red" />
+                  <span className="dot dot-yellow" />
+                  <span className="dot dot-green" />
+                </div>
+              </div>
+              <div className="mock-body">
+                <div className="mock-field">
+                  <label>Property Address</label>
+                  <div className="mock-chip">
+                    <Planet size={18} weight="duotone" />
+                    <span>124 Maple Ave, Springfield</span>
+                  </div>
+                </div>
+                <div className="mock-map">
+                  <div className="mock-map-chip">
+                    <CheckCircle size={14} weight="duotone" />
+                    <span>Roof Detected: 2,400 sq ft</span>
+                  </div>
+                </div>
+                <div className="mock-materials">
+                  <p className="label">Select Material</p>
+                  <div className="mock-material-grid">
+                    <button className="material-pill active">
+                      <SquaresFour size={18} weight="duotone" />
+                      <span>Shingle</span>
+                    </button>
+                    <button className="material-pill">
+                      <Lightning size={18} weight="duotone" />
+                      <span>Metal</span>
+                    </button>
+                    <button className="material-pill">
+                      <SlidersHorizontal size={18} weight="duotone" />
+                      <span>Tile</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="mock-footer">
+                  <div>
+                    <p className="label">Estimated Range</p>
+                    <p className="mock-range">${tool.price_monthly ? `${tool.price_monthly} / mo` : "Custom"}</p>
+                  </div>
+                  <button className="btn-light">Send Quote</button>
+                </div>
+              </div>
+            </div>
+            <div className="floating-card">
+              <DeviceMobileCamera size={20} weight="duotone" className="float-icon" />
+              <div>
+                <p className="float-sub">New Lead Captured</p>
+                <p className="float-title">Just now</p>
+              </div>
+            </div>
           </div>
-        ))}
+        </div>
+      </section>
+
+      <section className="tool-stats">
+        <div className="stat-card">
+          <div className="stat-head">
+            <p>Lead Capture Increase</p>
+            <TrendUp size={22} weight="duotone" />
+          </div>
+          <p className="stat-value">30%</p>
+          <p className="stat-tag positive">+15% vs industry avg</p>
+        </div>
+        <div className="stat-card">
+          <div className="stat-head">
+            <p>Quote Generation Speed</p>
+            <Lightning size={22} weight="duotone" />
+          </div>
+          <p className="stat-value">Instant</p>
+          <p className="stat-sub">Real-time calculation</p>
+        </div>
+        <div className="stat-card">
+          <div className="stat-head">
+            <p>Contractor Trust</p>
+            <ShieldCheck size={22} weight="duotone" />
+          </div>
+          <p className="stat-value">500+</p>
+          <p className="stat-tag primary">Active Installations</p>
+        </div>
+      </section>
+
+      <section className="tool-features">
+        <div className="features-head">
+          <p className="nx-kicker">Powerful Features</p>
+          <h3>Why choose this estimator?</h3>
+          <p className="nx-subtle">
+            Combine precision tech with a seamless UX to boost your roofing business without manual legwork.
+          </p>
+        </div>
+        <div className="features-grid">
+          {features.map((feat, idx) => {
+            const icons = [Planet, SquaresFour, GitBranch, DeviceMobileCamera, ChartLine, SlidersHorizontal];
+            const Icon = icons[idx % icons.length];
+            return (
+              <div key={idx} className="feature-card">
+                <div className="feature-icon">
+                  <Icon size={24} weight="duotone" />
+                </div>
+                <h4>{feat.title}</h4>
+                <p>{feat.copy}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="workflow">
+        <div className="workflow-head">
+          <h3>Seamless workflow</h3>
+          <p>From visitor to closed deal, automated at every step.</p>
+        </div>
+        <div className="workflow-steps">
+          {[
+            { title: "Visitor input", copy: "Enters address and info", icon: HandPointing },
+            { title: "Smart calculation", copy: "AI measures and prices", icon: Brain },
+            { title: "CRM sync", copy: "Data sent to your tools", icon: GitBranch },
+            { title: "Lead closed", copy: "Sales team follows up", icon: CheckCircle },
+          ].map((step, idx) => {
+            const Icon = step.icon;
+            return (
+              <div key={idx} className="workflow-card">
+                <div className="workflow-icon">
+                  <Icon size={28} weight="duotone" />
+                </div>
+                <h5>{step.title}</h5>
+                <p>{step.copy}</p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="tool-cta">
+        <div className="cta-copy">
+          <h3>Ready to transform your roofing website?</h3>
+          <p>Join hundreds of contractors using the estimator to generate leads while they sleep.</p>
+          <div className="hero-actions">
+            <button className="btn-primary" onClick={() => setShowOnboard(true)}>
+              Start Free Trial
+            </button>
+            <button className="btn-ghost" onClick={handleEmbed}>
+              Contact Sales
+            </button>
+          </div>
+        </div>
       </section>
 
       {showOnboard && (
@@ -198,7 +394,7 @@ const ToolDetailPage: React.FC = () => {
                   Cancel
                 </button>
                 <button className="nx-cta" type="button" onClick={startOnboarding} disabled={saving}>
-                  {saving ? "Working…" : "Continue to payment"}
+                  {saving ? "Working..." : "Continue to payment"}
                 </button>
               </div>
               {onboardError && <p className="error">{onboardError}</p>}
