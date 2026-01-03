@@ -1,4 +1,7 @@
+@tailwind components;
 @tailwind utilities;
+
+/* Note: @tailwind base intentionally omitted to avoid global reset collisions with existing dashboard styles. */
 
 /* Synapse Marketplace */
 :root {
