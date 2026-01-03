@@ -215,19 +215,7 @@ const ToolDetailPage: React.FC = () => {
       </header>
 
       <main className="relative z-10">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <div className="flex items-center gap-3 py-4 text-sm text-slate-400">
-            <button
-              onClick={() => navigate("/marketplace")}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-300 transition hover:border-white/30 hover:text-white"
-            >
-              <CaretLeft size={14} weight="duotone" />
-              Back to marketplace
-            </button>
-          </div>
-        </div>
-
-        <section className="pt-10 pb-16 lg:pt-16 lg:pb-24">
+        <section className="pt-6 pb-16 lg:pt-10 lg:pb-24">
           <div className="mx-auto max-w-7xl px-4 lg:px-8">
             <div className="grid items-center gap-12 lg:grid-cols-2">
               <div className="space-y-6">
@@ -276,6 +264,9 @@ const ToolDetailPage: React.FC = () => {
               <div className="relative flex items-center justify-center">
                 <div className="absolute inset-0 -z-10 rounded-2xl bg-gradient-to-tr from-purple-500/20 to-cyan-400/20 blur-3xl opacity-40" />
                 <div className="relative w-full max-w-[560px] rounded-2xl border border-white/10 bg-[#0F0F12]/90 shadow-[0_30px_120px_rgba(0,0,0,0.7)] backdrop-blur-2xl">
+                  <div className="absolute left-4 top-3 z-20 inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-200 backdrop-blur-xl">
+                    Mockup
+                  </div>
                   <div className="flex items-center gap-3 border-b border-white/10 bg-[#13131A]/90 px-4 py-3">
                     <div className="flex items-center gap-1.5">
                       <span className="h-3 w-3 rounded-full bg-red-500/90" />
@@ -398,14 +389,20 @@ const ToolDetailPage: React.FC = () => {
             <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {features.map((feat, idx) => {
                 const icons = [Planet, SquaresFour, GitBranch, DeviceMobile, ChartLine, SlidersHorizontal];
+                const colors = ["rgba(6,182,212,0.45)", "rgba(124,58,237,0.45)", "rgba(6,182,212,0.45)", "rgba(124,58,237,0.45)", "rgba(6,182,212,0.45)", "rgba(124,58,237,0.45)"];
                 const Icon = icons[idx % icons.length];
+                const glow = colors[idx % colors.length];
                 return (
-                  <div key={`${feat.title}-${idx}`} className="rounded-2xl px-6 py-6 transition duration-300 hover:border-purple-400/40" style={glassStyle}>
-                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-purple-300">
+                  <div key={`${feat.title}-${idx}`} className="group relative overflow-hidden rounded-2xl px-6 py-6 transition duration-300" style={glassStyle}>
+                    <div
+                      className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition duration-300 group-hover:opacity-100"
+                      style={{ background: `radial-gradient(circle at 30% 30%, ${glow}, transparent 55%)`, border: `1px solid ${glow}` }}
+                    />
+                    <div className="relative mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-purple-300">
                       <Icon size={26} weight="duotone" />
                     </div>
-                    <h4 className="text-xl font-bold text-white">{feat.title}</h4>
-                    <p className="mt-2 text-slate-400">{feat.copy}</p>
+                    <h4 className="relative text-xl font-bold text-white">{feat.title}</h4>
+                    <p className="relative mt-2 text-slate-400">{feat.copy}</p>
                   </div>
                 );
               })}
